@@ -1,17 +1,28 @@
-<?php 
-// Database Configuration
-define('DB_HOST', 'localhost'); 
-define('DB_NAME', 'auth_db'); 
-define('DB_USER', 'auth_user');   // Create this MySQL user if it doesn’t exist
-define('DB_PASS', 'strong_password'); // Replace with your password
+<?php
+// Site timezone
+$conf['site_timezone'] = 'Africa/Nairobi';
 
-// SMTP (for PHPMailer – Person 2 will need this)
-define('SMTP_HOST', 'smtp.gmail.com'); 
-define('SMTP_PORT', 587); 
-define('SMTP_USER', 'memusisanaet12@gmail.com');      // Replace with your Gmail
-define('SMTP_PASS', 'your-app-password');         // Replace with Gmail App Password
-define('SITE_URL', 'http://localhost/auth-system'); 
+// Site information
+$conf['site_name'] = 'GYM';
+$conf['site_url'] = 'http://localhost/IAP.P';
+$conf['admin_email'] = 'admin@icsbacademy.com';
 
-// Start Session
-session_start(); 
-?>
+// Site language
+$conf['site_lang'] = 'en';
+
+// Database configuration
+$conf['db_type'] = 'pdo';
+$conf['db_host'] = 'localhost';
+$conf['db_user'] = 'root';
+$conf['db_pass'] = 'malindi100';
+$conf['db_name'] = 'azhar';
+
+// Email configuration
+$conf['mail_type'] = 'smtp'; 
+$conf['smtp_host'] = 'smtp.gmail.com';
+$conf['smtp_user'] = 'azhar.abeid@strathmore.edu';
+$conf['smtp_pass'] = 'hfwi mvec ziut dwii';
+$conf['smtp_port'] = 465;
+$conf['smtp_secure'] = 'ssl';
+$conf['stmp_recepient']='Devyan';
+$conf['recepient_email']='devyan.jethwa@strathmore.edu';
