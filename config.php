@@ -3,9 +3,9 @@
 $conf['site_timezone'] = 'Africa/Nairobi';
 
 // Site information
-$conf['site_name'] = 'GYM';
-$conf['site_url'] = 'http://localhost/IAP.P';
-$conf['admin_email'] = 'admin@icsbacademy.com';
+$conf['site_name'] = 'Online Store';
+$conf['site_url'] = 'http://localhost/IAP.GROUP/IAP2.2';
+$conf['admin_email'] = 'azhar.abeid@strathmore.edu';
 
 // Site language
 $conf['site_lang'] = 'en';
@@ -15,7 +15,7 @@ $conf['db_type'] = 'pdo';
 $conf['db_host'] = 'localhost';
 $conf['db_user'] = 'root';
 $conf['db_pass'] = 'malindi100';
-$conf['db_name'] = 'azhar';
+$conf['db_name'] = 'Azhar';
 
 // Email configuration
 $conf['mail_type'] = 'smtp'; 
