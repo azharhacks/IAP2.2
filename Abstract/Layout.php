@@ -2,7 +2,7 @@
 <?php
 require '../Config.php';
 require '../ClassAutoload.php';
-class Layouts {
+class Layout {
     public function header($conf) {
 ?>
 <!DOCTYPE html>
