@@ -4,15 +4,15 @@ require 'ClassAutoload.php';
 require 'Abstract/Layout.php';
 
 // Create layout instance
-$layout = new Layout();
-$layout->header($conf);
-$layout->navbar($conf);
+$ObjLayout = new Layout();
+$ObjLayout->header($conf);
+$ObjLayout->navbar($conf);
 
 // Create Forms instance
-$forms = new Forms();
+$ObjForms = new Forms();
 
 // Use the form_content method from Layout
-$layout->form_content($conf, $forms);
+$ObjLayout->form_content($conf, $ObjForms);
 
-$layout->footer($conf);
+$ObjLayout->footer($conf);
 ?>
