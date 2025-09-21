@@ -6,7 +6,7 @@ require '../ClassAutoload.php';
 
 class Forms {
 
-    public function signup() {
+    public function signup($conf) {
         global $conf;
 
         // Connect to database
@@ -73,7 +73,7 @@ class Forms {
 <?php
     }
 
-    public function signin() {
+    public function signin($conf) {
         global $conf;
 
         // Handle form submission
