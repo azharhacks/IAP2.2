@@ -1,4 +1,7 @@
+
 <?php
+require '../Config.php';
+require '../ClassAutoload.php';
 class Layouts {
     public function header($conf) {
 ?>
