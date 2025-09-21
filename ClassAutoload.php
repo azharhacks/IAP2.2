@@ -16,5 +16,5 @@ spl_autoload_register(function ($class_name) {
 });
 // Create an instance of the class
 
-$ObjLayout = new Layouts();
+$ObjLayout = new Layout();
 $ObjForm = new Forms();
