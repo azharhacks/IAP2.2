@@ -20,19 +20,33 @@ class Forms {
             $email    = trim($_POST['email']);
             $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the password
 
-            // Insert into DB
-            $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-            if ($stmt->execute([$username, $email, $password])) {
-                echo "<p style='color:green;'>Signup successful! You can now sign in.</p>";
-                require_once __DIR__ . '/../Global/SendMail.php';
-        $ObjSendMail = new SendMail();
-        $ObjSendMail->sendMail($conf, $username, $email);
-            } else {
-                echo "<p style='color:red;'>Error: could not sign up.</p>";
-            }
+            // Check if email already exists
+            $checkStmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+            $checkStmt->execute([$email]);
             
+            if ($checkStmt->rowCount() > 0) {
+                echo "<p style='color:red;'>Error: Email already exists. Please use a different email.</p>";
+            } else {
+                // Generate verification token
+                $verificationToken = bin2hex(random_bytes(32));
+                $tokenExpiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
 
-
+                // Insert into DB with email_verified = 0
+                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, email_verified, verification_token, token_expiry) VALUES (?, ?, ?, 0, ?, ?)");
+                if ($stmt->execute([$username, $email, $password, $verificationToken, $tokenExpiry])) {
+                    // Send verification email
+                    require_once __DIR__ . '/../Mail/SendMail.php';
+                    $ObjSendMail = new SendMail();
+                    
+                    if ($ObjSendMail->sendVerificationMail($conf, $username, $email, $verificationToken)) {
+                        echo "<p style='color:green;'>Signup successful! Please check your email to verify your account before signing in.</p>";
+                    } else {
+                        echo "<p style='color:orange;'>Account created but verification email could not be sent. Please contact support.</p>";
+                    }
+                } else {
+                    echo "<p style='color:red;'>Error: could not sign up.</p>";
+                }
+            }
         }
         
 
@@ -60,6 +74,42 @@ class Forms {
     }
 
     public function signin() {
+        global $conf;
+
+        // Handle form submission
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Connect to database
+            $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
+            $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $email = trim($_POST['email']);
+            $password = $_POST['password'];
+
+            // Check user credentials and verification status
+            $stmt = $pdo->prepare("SELECT id, username, password, email_verified FROM users WHERE email = ?");
+            $stmt->execute([$email]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($user && password_verify($password, $user['password'])) {
+                if ($user['email_verified'] == 1) {
+                    // User is verified, proceed with login
+                    session_start();
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['email'] = $email;
+                    
+                    echo "<p style='color:green;'>Login successful! Welcome back, " . htmlspecialchars($user['username']) . "!</p>";
+                    // Redirect to dashboard or home page
+                    // header("Location: dashboard.php");
+                    // exit();
+                } else {
+                    echo "<p style='color:red;'>Please verify your email address before signing in. Check your email for the verification link.</p>";
+                }
+            } else {
+                echo "<p style='color:red;'>Invalid email or password.</p>";
+            }
+        }
 ?>
         <form method="POST" action="">
             <div class="mb-3">
