@@ -1,8 +1,8 @@
 <?php
 // Start session and include necessary files
 session_start();
-require_once 'Config.php';
-require_once 'ClassAutoload.php';
+require_once __DIR__ . '/Config.php';
+require_once __DIR__ . '/ClassAutoload.php';
 
 // Check if user is logged in and 2FA is verified
 if (!isset($_SESSION['user_id'])) {
@@ -17,18 +17,23 @@ if (!isset($_SESSION['2fa_verified']) || $_SESSION['2fa_verified'] !== true) {
 }
 
 // Get user data
-$db = Database::getInstance();
-$conn = $db->getConnection();
+try {
+    $db = Database::getInstance();
+    $conn = $db->getConnection();
 
-$stmt = $conn->prepare("SELECT email FROM users WHERE id = ?");
-$stmt->execute([$_SESSION['user_id']]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("SELECT email, first_name, last_name FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// If user not found, destroy session and redirect
-if (!$user) {
-    session_destroy();
-    header('Location: ' . SITE_URL . '/Signin.php?error=user_not_found');
-    exit();
+    // If user not found, destroy session and redirect
+    if (!$user) {
+        session_destroy();
+        header('Location: ' . SITE_URL . '/Signin.php?error=user_not_found');
+        exit();
+    }
+} catch (PDOException $e) {
+    error_log("Database error: " . $e->getMessage());
+    die("A database error occurred. Please try again later.");
 }
 ?>
 <!DOCTYPE html>
