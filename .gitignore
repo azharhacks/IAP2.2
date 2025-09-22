@@ -1,0 +1,25 @@
+# Personal configuration files (Person 3 specific)
+Config.php
+
+# Database credentials and personal settings
+config.php
+
+# Test files
+test_*.php
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
