@@ -1,7 +1,7 @@
 
 <?php
-require '../Config.php';
-require '../ClassAutoload.php';
+require __DIR__ . '/../Config.php';
+require __DIR__ . '/../ClassAutoload.php';
 class Layout {
     public function header($conf) {
 ?>
@@ -93,9 +93,9 @@ class Layout {
                <div class="card card-custom p-4">
                   <?php 
                      if (basename($_SERVER['PHP_SELF']) == 'signup.php') {
-                        $ObjForm->signup();
+                        $ObjForm->signup($conf);
                      } else {
-                        $ObjForm->signin();
+                        $ObjForm->signin($conf);
                      }
                   ?>
                </div>

@@ -1,7 +1,6 @@
 <?php
 require 'Config.php';
 require 'ClassAutoload.php';
-require 'Abstract/Layout.php';
 
 
 $ObjLayout->header($conf);

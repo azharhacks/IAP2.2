@@ -1,7 +1,7 @@
 
 <?php
-require '../Config.php';
-require '../ClassAutoload.php';
+require __DIR__ . '/../Config.php';
+require __DIR__ . '/../ClassAutoload.php';
 
 
 class Forms {
@@ -9,8 +9,13 @@ class Forms {
     public function signup($conf) {
         global $conf;
 
-        // Connect to database
-        $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
+        // Connect to database using socket (XAMPP)
+        $socket_path = '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock';
+        if (file_exists($socket_path)) {
+            $dsn = "mysql:unix_socket={$socket_path};dbname={$conf['db_name']};charset=utf8mb4";
+        } else {
+            $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
+        }
         $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -27,13 +32,18 @@ class Forms {
             if ($checkStmt->rowCount() > 0) {
                 echo "<p style='color:red;'>Error: Email already exists. Please use a different email.</p>";
             } else {
-                // Generate verification token
+                // Generate verification token and TOTP secret
                 $verificationToken = bin2hex(random_bytes(32));
                 $tokenExpiry = date('Y-m-d H:i:s', strtotime('+24 hours'));
+                
+                // Generate TOTP secret for 2FA
+                require_once __DIR__ . '/../vendor/autoload.php';
+                $tfa = new RobThree\Auth\TwoFactorAuth();
+                $totpSecret = $tfa->createSecret();
 
                 // Insert into DB with email_verified = 0
-                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, email_verified, verification_token, token_expiry) VALUES (?, ?, ?, 0, ?, ?)");
-                if ($stmt->execute([$username, $email, $password, $verificationToken, $tokenExpiry])) {
+                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, email_verified, verification_token, token_expiry, totp_secret) VALUES (?, ?, ?, 0, ?, ?, ?)");
+                if ($stmt->execute([$username, $email, $password, $verificationToken, $tokenExpiry, $totpSecret])) {
                     // Send verification email
                     require_once __DIR__ . '/../Mail/SendMail.php';
                     $ObjSendMail = new SendMail();
@@ -78,8 +88,13 @@ class Forms {
 
         // Handle form submission
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Connect to database
-            $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
+            // Connect to database using socket (XAMPP)
+            $socket_path = '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock';
+            if (file_exists($socket_path)) {
+                $dsn = "mysql:unix_socket={$socket_path};dbname={$conf['db_name']};charset=utf8mb4";
+            } else {
+                $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
+            }
             $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -93,16 +108,15 @@ class Forms {
 
             if ($user && password_verify($password, $user['password'])) {
                 if ($user['email_verified'] == 1) {
-                    // User is verified, proceed with login
+                    // User is verified, set session for 2FA verification
                     session_start();
-                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['pending_2fa_user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['email'] = $email;
                     
-                    echo "<p style='color:green;'>Login successful! Welcome back, " . htmlspecialchars($user['username']) . "!</p>";
-                    // Redirect to dashboard or home page
-                    // header("Location: dashboard.php");
-                    // exit();
+                    // Redirect to 2FA verification
+                    header("Location: 2fa_verify.php");
+                    exit();
                 } else {
                     echo "<p style='color:red;'>Please verify your email address before signing in. Check your email for the verification link.</p>";
                 }
