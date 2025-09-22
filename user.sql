@@ -13,3 +13,5 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+--#Sets the storage engine to InnoDB Character Encoding: Uses UTF-8 MB4 encoding helps with emojis and languages to i think
+
