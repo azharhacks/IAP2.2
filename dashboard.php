@@ -1,7 +1,7 @@
 <?php
 // Start session and include necessary files
 session_start();
-require_once __DIR__ . '/Config.php';
+require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/ClassAutoload.php';
 
 // Check if user is logged in and 2FA is verified
