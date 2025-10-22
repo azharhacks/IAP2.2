@@ -6,49 +6,60 @@ $message = '';
 $messageType = '';
 
 if (isset($_GET['token'])) {
-    $token = $_GET['token'];
+    $token = trim($_GET['token']);
     
-    try {
-        // Connect to database using socket (XAMPP)
-        $socket_path = '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock';
-        if (file_exists($socket_path)) {
-            $dsn = "mysql:unix_socket={$socket_path};dbname={$conf['db_name']};charset=utf8mb4";
-        } else {
+    // Validate token format (should be 64 character hex string)
+    if (!preg_match('/^[a-f0-9]{64}$/', $token)) {
+        $message = 'Invalid verification token format.';
+        $messageType = 'error';
+    } else {
+        try {
+            // Connect to database - Linux/Fedora standard connection
             $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
-        }
-        $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        // Check if token exists and is not expired
-        $stmt = $pdo->prepare("SELECT id, email, token_expiry FROM users WHERE verification_token = ? AND email_verified = 0");
-        $stmt->execute([$token]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($user) {
-            // Check if token is expired
-            if ($user['token_expiry'] && strtotime($user['token_expiry']) < time()) {
-                $message = 'Verification link has expired. Please sign up again.';
-                $messageType = 'error';
-            } else {
-                // Mark email as verified
-                $updateStmt = $pdo->prepare("UPDATE users SET email_verified = 1, verification_token = NULL, token_expiry = NULL WHERE id = ?");
-                if ($updateStmt->execute([$user['id']])) {
-                    $message = 'Email verified successfully! You can now sign in to your account.';
-                    $messageType = 'success';
+            $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            
+            // Check if token exists and is not expired
+            $stmt = $pdo->prepare("SELECT id, username, email, token_expiry FROM users WHERE verification_token = ? AND email_verified = 0");
+            $stmt->execute([$token]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($user) {
+                // Check if token is expired
+                if ($user['token_expiry'] && strtotime($user['token_expiry']) < time()) {
+                    $message = 'Verification link has expired. Please sign up again.';
+                    $messageType = 'error';
                 } else {
-                    $message = 'Error verifying email. Please try again.';
+                    // Mark email as verified
+                    $updateStmt = $pdo->prepare("UPDATE users SET email_verified = 1, verification_token = NULL, token_expiry = NULL WHERE id = ?");
+                    if ($updateStmt->execute([$user['id']])) {
+                        $message = 'Email verified successfully! Welcome, ' . htmlspecialchars($user['username']) . '! You can now sign in to your account.';
+                        $messageType = 'success';
+                    } else {
+                        $message = 'Error verifying email. Please try again.';
+                        $messageType = 'error';
+                    }
+                }
+            } else {
+                // Check if user with this token already verified
+                $checkStmt = $pdo->prepare("SELECT id, username FROM users WHERE verification_token = ? AND email_verified = 1");
+                $checkStmt->execute([$token]);
+                $verifiedUser = $checkStmt->fetch(PDO::FETCH_ASSOC);
+                
+                if ($verifiedUser) {
+                    $message = 'This email has already been verified. You can sign in to your account.';
+                    $messageType = 'info';
+                } else {
+                    $message = 'Invalid or expired verification link.';
                     $messageType = 'error';
                 }
             }
-        } else {
-            $message = 'Invalid verification link or email already verified.';
+            
+        } catch (PDOException $e) {
+            $message = 'Database error occurred. Please try again later.';
             $messageType = 'error';
+            error_log("Database error in verify.php: " . $e->getMessage());
         }
-        
-    } catch (PDOException $e) {
-        $message = 'Database error occurred. Please try again later.';
-        $messageType = 'error';
-        error_log("Database error in verify.php: " . $e->getMessage());
     }
 } else {
     $message = 'No verification token provided.';
@@ -108,14 +119,14 @@ if (isset($_GET['token'])) {
                 <p class="text-muted mb-4">
                     Your email has been successfully verified. You can now access all features of your account.
                 </p>
-                <a href="signin.php" class="btn btn-primary btn-custom">Sign In Now</a>
+                <a href="Signin.php" class="btn btn-primary btn-custom">Sign In Now</a>
             <?php else: ?>
                 <p class="text-muted mb-4">
                     If you're having trouble, please try signing up again or contact support.
                 </p>
                 <div class="d-flex gap-2 justify-content-center">
-                    <a href="signup.php" class="btn btn-outline-primary">Sign Up Again</a>
-                    <a href="signin.php" class="btn btn-primary btn-custom">Back to Sign In</a>
+                    <a href="Signup.php" class="btn btn-outline-primary">Sign Up Again</a>
+                    <a href="Signin.php" class="btn btn-primary btn-custom">Back to Sign In</a>
                 </div>
             <?php endif; ?>
         </div>

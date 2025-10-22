@@ -18,5 +18,5 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 // Redirect to signin page
-header('Location: ' . SITE_URL . '/Signin.php');
+header('Location: ' . $conf['site_url'] . '/Signin.php');
 exit();

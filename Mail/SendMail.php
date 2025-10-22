@@ -16,10 +16,22 @@ class SendMail {
             $mail->SMTPAuth = true;
             $mail->Username = $conf['smtp_user'];
             $mail->Password = $conf['smtp_pass'];
-            $mail->SMTPSecure = $conf['smtp_secure'];
+            
+            // Set encryption method based on config
+            if ($conf['smtp_secure'] == 'ssl') {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS; // SSL/SMTPS for port 465
+            } else {
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS; // TLS for port 587
+            }
+            
             $mail->Port = $conf['smtp_port'];
-
-            // Recipients
+            
+            // Disable debug output in production
+            $mail->SMTPDebug = 0; // Set to 2 for debugging
+            
+            // Timeout settings
+            $mail->Timeout = 30;
+            $mail->SMTPKeepAlive = true;            // Recipients
             $mail->setFrom($conf['smtp_user'], $conf['site_name']);
             $mail->addAddress($email, $username);
 

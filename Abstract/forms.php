@@ -1,21 +1,14 @@
 
 <?php
-require __DIR__ . '/../Config.php';
-require __DIR__ . '/../ClassAutoload.php';
-
+// Remove duplicate includes to prevent circular dependency issues
 
 class Forms {
 
-    public function signup($conf) {
+    public function signup() {
         global $conf;
 
-        // Connect to database using socket (XAMPP)
-        $socket_path = '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock';
-        if (file_exists($socket_path)) {
-            $dsn = "mysql:unix_socket={$socket_path};dbname={$conf['db_name']};charset=utf8mb4";
-        } else {
-            $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
-        }
+        // Connect to database - Linux/Fedora standard connection
+        $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
         $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -48,10 +41,34 @@ class Forms {
                     require_once __DIR__ . '/../Mail/SendMail.php';
                     $ObjSendMail = new SendMail();
                     
-                    if ($ObjSendMail->sendVerificationMail($conf, $username, $email, $verificationToken)) {
+                    $emailSent = $ObjSendMail->sendVerificationMail($conf, $username, $email, $verificationToken);
+                    
+                    // If SMTP fails, try fallback method for development
+                    if (!$emailSent) {
+                        require_once __DIR__ . '/../FallbackEmail.php';
+                        $fallback = new FallbackEmailSender();
+                        $verificationLink = $conf['site_url'] . '/verify.php?token=' . $verificationToken;
+                        $message = "
+                            <h2>Welcome to " . $conf['site_name'] . "!</h2>
+                            <p>Hello " . htmlspecialchars($username) . ",</p>
+                            <p>Please verify your email by visiting: <a href='" . $verificationLink . "'>" . $verificationLink . "</a></p>
+                            <p>This link will expire in 24 hours.</p>
+                        ";
+                        $emailSent = $fallback->sendSimpleEmail($email, 'Verify Your Email - ' . $conf['site_name'], $message);
+                    }
+                    
+                    if ($emailSent) {
                         echo "<p style='color:green;'>Signup successful! Please check your email to verify your account before signing in.</p>";
                     } else {
-                        echo "<p style='color:orange;'>Account created but verification email could not be sent. Please contact support.</p>";
+                        // For development/testing: Auto-redirect to verification page
+                        $verificationUrl = $conf['site_url'] . "/verify.php?token=" . $verificationToken;
+                        echo "<p style='color:orange;'>Account created! Redirecting to verification page...</p>";
+                        echo "<script>
+                            setTimeout(function() {
+                                window.location.href = '" . $verificationUrl . "';
+                            }, 2000);
+                        </script>";
+                        echo "<p><a href='" . $verificationUrl . "'>Click here if not redirected automatically</a></p>";
                     }
                 } else {
                     echo "<p style='color:red;'>Error: could not sign up.</p>";
@@ -78,23 +95,18 @@ class Forms {
             </div>
 
             <?php $this->submit_button('Sign Up', 'signup'); ?>
-            <a href='signin.php'>Already have an account? Sign In</a>
+            <a href='Signin.php'>Already have an account? Sign In</a>
         </form>
 <?php
     }
 
-    public function signin($conf) {
+    public function signin() {
         global $conf;
 
         // Handle form submission
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Connect to database using socket (XAMPP)
-            $socket_path = '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock';
-            if (file_exists($socket_path)) {
-                $dsn = "mysql:unix_socket={$socket_path};dbname={$conf['db_name']};charset=utf8mb4";
-            } else {
-                $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
-            }
+            // Connect to database - Linux/Fedora standard connection
+            $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
             $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -102,7 +114,7 @@ class Forms {
             $password = $_POST['password'];
 
             // Check user credentials and verification status
-            $stmt = $pdo->prepare("SELECT id, username, password, email_verified FROM users WHERE email = ?");
+            $stmt = $pdo->prepare("SELECT id, username, password, email_verified, totp_secret FROM users WHERE email = ?");
             $stmt->execute([$email]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -113,6 +125,7 @@ class Forms {
                     $_SESSION['pending_2fa_user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['email'] = $email;
+                    $_SESSION['totp_secret'] = $user['totp_secret'];
                     
                     // Redirect to 2FA verification
                     header("Location: 2fa_verify.php");
@@ -136,7 +149,7 @@ class Forms {
             </div>
 
             <?php $this->submit_button('Sign In', 'signin'); ?>
-            <a href='signup.php'>Don't have an account? Sign Up</a>
+            <a href='Signup.php'>Don't have an account? Sign Up</a>
         </form>
 <?php
     }

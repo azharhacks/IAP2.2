@@ -1,7 +1,6 @@
 
 <?php
-require __DIR__ . '/../Config.php';
-require __DIR__ . '/../ClassAutoload.php';
+// Remove duplicate includes to prevent circular dependency issues
 class Layout {
     public function header($conf) {
 ?>
@@ -38,8 +37,8 @@ class Layout {
                   <li class="nav-item"><a class="nav-link active" href="./">Home</a></li>
                   <li class="nav-item"><a class="nav-link" href="products.php">Shop</a></li>
                   <li class="nav-item"><a class="nav-link" href="cart.php">Cart</a></li>
-                  <li class="nav-item"><a class="nav-link" href="signup.php">Sign Up</a></li>
-                  <li class="nav-item"><a class="nav-link" href="signin.php">Sign In</a></li>
+                  <li class="nav-item"><a class="nav-link" href="Signup.php">Sign Up</a></li>
+                  <li class="nav-item"><a class="nav-link" href="Signin.php">Sign In</a></li>
                </ul>
             </div>
          </div>
@@ -92,7 +91,7 @@ class Layout {
             <div class="col-md-6">
                <div class="card card-custom p-4">
                   <?php 
-                     if (basename($_SERVER['PHP_SELF']) == 'signup.php') {
+                     if (basename($_SERVER['PHP_SELF']) == 'Signup.php') {
                         $ObjForm->signup($conf);
                      } else {
                         $ObjForm->signin($conf);

@@ -4,8 +4,8 @@ $conf['site_timezone'] = 'Africa/Nairobi';
 
 // Site information
 $conf['site_name'] = 'Online Store';
-$conf['site_url'] = 'http://localhost/IAP.GROUP/IAP2.2';
-$conf['admin_email'] = 'azhar.abeid@strathmore.edu';
+$conf['site_url'] = 'http://localhost/IAP2.2Dev';
+$conf['admin_email'] = 'Devyan.jethwa@strathmore.edu';
 
 // Site language
 $conf['site_lang'] = 'en';
@@ -14,15 +14,16 @@ $conf['site_lang'] = 'en';
 $conf['db_type'] = 'pdo';
 $conf['db_host'] = 'localhost';
 $conf['db_user'] = 'root';
-$conf['db_pass'] = 'malindi100';
-$conf['db_name'] = 'Azhar';
+$conf['db_pass'] = 'devyan2005';
+$conf['db_name'] = 'auth_db';
 
 // Email configuration
 $conf['mail_type'] = 'smtp'; 
 $conf['smtp_host'] = 'smtp.gmail.com';
-$conf['smtp_user'] = 'azhar.abeid@strathmore.edu';
-$conf['smtp_pass'] = 'hfwi mvec ziut dwii';
+$conf['smtp_user'] = 'devyan.jethwa@strasthmore.edu';
+$conf['smtp_pass'] = 'hvmc tezo jexn lbkg';
 $conf['smtp_port'] = 465;
 $conf['smtp_secure'] = 'ssl';
-$conf['stmp_recepient']='Devyan';
-$conf['recepient_email']='devyan.jethwa@strathmore.edu';
+$conf['smtp_recepient']='Devyan';
+$conf['recepient_email']='vrindevj@gmail.com';
+

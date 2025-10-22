@@ -1,5 +1,5 @@
 <?php
-require 'Config.php';
+require 'config.php';
 require 'ClassAutoload.php';
 
 $ObjLayout ->header($conf);

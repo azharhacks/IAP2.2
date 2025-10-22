@@ -7,7 +7,7 @@ $success = '';
 
 // Check if user came from signin process
 if (!isset($_SESSION['pending_2fa_user_id'])) {
-    header('Location: signin.php');
+    header('Location: Signin.php');
     exit();
 }
 
@@ -21,13 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = 'Please enter a valid 6-digit code.';
     } else {
         try {
-            // Connect to database using socket (XAMPP)
-            $socket_path = '/Applications/XAMPP/xamppfiles/var/mysql/mysql.sock';
-            if (file_exists($socket_path)) {
-                $dsn = "mysql:unix_socket={$socket_path};dbname={$conf['db_name']};charset=utf8mb4";
-            } else {
-                $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
-            }
+            // Connect to database - Linux/Fedora standard connection
+            $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
             $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
@@ -174,9 +169,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </button>
                 </div>
             </form>
+
+            <!-- 2FA Setup Instructions -->
+            <div class="mt-4 pt-3 border-top">
+                <h6 class="text-center mb-3">First time setup? Add this account to your authenticator app:</h6>
+                
+                <?php
+                // Get TOTP secret for QR code generation
+                if (isset($_SESSION['totp_secret'])) {
+                    require_once 'vendor/autoload.php';
+                    $tfa = new RobThree\Auth\TwoFactorAuth($conf['site_name']);
+                    $totpSecret = $_SESSION['totp_secret'];
+                    $userEmail = $_SESSION['email'];
+                    
+                    // Generate QR code URL
+                    $qrCodeUrl = $tfa->getQRCodeImageAsDataUri($userEmail, $totpSecret);
+                    
+                    echo '<div class="text-center mb-3">';
+                    echo '<div class="mb-3">';
+                    echo '<strong>Option 1: Scan QR Code</strong><br>';
+                    echo '<img src="' . $qrCodeUrl . '" alt="QR Code" class="img-fluid" style="max-width: 200px;">';
+                    echo '</div>';
+                    
+                    echo '<div class="mb-3">';
+                    echo '<strong>Option 2: Manual Setup Key</strong><br>';
+                    echo '<code style="font-size: 0.9rem; background: #f8f9fa; padding: 8px; border-radius: 4px; display: inline-block; margin-top: 5px;">' . $totpSecret . '</code>';
+                    echo '<br><small class="text-muted">Enter this key manually in your authenticator app</small>';
+                    echo '</div>';
+                    echo '</div>';
+                }
+                ?>
+            </div>
             
             <div class="text-center">
-                <a href="signin.php" class="text-decoration-none">
+                <a href="Signin.php" class="text-decoration-none">
                     ← Back to Sign In
                 </a>
             </div>
