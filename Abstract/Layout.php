@@ -1,4 +1,3 @@
-
 <?php
 // Remove duplicate includes to prevent circular dependency issues
 class Layout {
@@ -39,6 +38,10 @@ class Layout {
                   <li class="nav-item"><a class="nav-link" href="cart.php">Cart</a></li>
                   <li class="nav-item"><a class="nav-link" href="Signup.php">Sign Up</a></li>
                   <li class="nav-item"><a class="nav-link" href="Signin.php">Sign In</a></li>
+                  <li class="nav-item"><a href="<?= SITE_URL ?>/products.php">Products</a></li>
+                  <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                     <li class="nav-item"><a href="<?= SITE_URL ?>/admin/users.php">Manage Users</a></li>
+                  <?php endif; ?>
                </ul>
             </div>
          </div>
