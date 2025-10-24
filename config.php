@@ -1,8 +1,4 @@
 <?php
-// Error reporting - show all errors except deprecation warnings
-error_reporting(E_ALL & ~E_DEPRECATED);
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
 // Site timezone
 $conf['site_timezone'] = 'Africa/Nairobi';
 
