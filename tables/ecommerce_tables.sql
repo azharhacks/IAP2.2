@@ -3,6 +3,10 @@
 -- Run these commands in phpMyAdmin SQL tab
 -- =====================================================
 
+/*TEAM 1*/
+--TABLES 1, 2, 7
+--AZHAR, DEVYAN
+
 -- 1. PRODUCTS TABLE
 -- Store all your products (phones, laptops, accessories, etc.)
 CREATE TABLE products (
@@ -29,6 +33,8 @@ CREATE TABLE categories (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+--TEAM 2 -- TABLES 4,5, 6
+-- SANAET ALVIN IAN
 -- 3. ORDERS TABLE
 -- Store customer orders
 CREATE TABLE orders (

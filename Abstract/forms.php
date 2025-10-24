@@ -37,9 +37,9 @@ class Forms {
                 // Insert into DB with email_verified = 0
                 $stmt = $pdo->prepare("
                 INSERT INTO users 
-                (username, first_name, last_name, email, password, email_verified, verification_token, created_at) 
-                VALUES (?, ?, ?, ?, ?, FALSE, ?, NOW())");
-                if ($stmt->execute([$username, '', '', $email, $password, $verificationToken])) {
+                (username, email, password, email_verified, verification_token, totp_secret, created_at) 
+                VALUES (?, ?, ?, FALSE, ?, ?, NOW())");
+                if ($stmt->execute([$username, $email, $password, $verificationToken, $totpSecret])) {
                     // Send verification email
                     require_once __DIR__ . '/../Mail/SendMail.php';
                     $ObjSendMail = new SendMail();
