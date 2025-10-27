@@ -1,48 +1,58 @@
 <?php
+/**
+ * Two-Factor Authentication Verification Page
+ * Handles TOTP (Time-based One-Time Password) verification for enhanced security
+ * Users must complete 2FA after successful login to access the dashboard
+ */
+
 session_start();
 require_once 'config.php';
 
+// Initialize error and success message variables
 $error = '';
 $success = '';
 
-// Check if user came from signin process
+// Security check - ensure user came from signin process
 if (!isset($_SESSION['pending_2fa_user_id'])) {
     header('Location: Signin.php');
     exit();
 }
 
-// Handle form submission
+// Process form submission for 2FA code verification
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $code = trim($_POST['code']);
     
+    // Validate 2FA code format
     if (empty($code)) {
         $error = 'Please enter your 6-digit authentication code.';
     } elseif (!preg_match('/^\d{6}$/', $code)) {
         $error = 'Please enter a valid 6-digit code.';
     } else {
         try {
-            // Connect to database - Linux/Fedora standard connection
+            // Establish secure database connection
             $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
             $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            // Get user's TOTP secret
+            // Retrieve user's TOTP secret for verification
             $stmt = $pdo->prepare("SELECT id, totp_secret, email FROM users WHERE id = ?");
             $stmt->execute([$_SESSION['pending_2fa_user_id']]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($user && $user['totp_secret']) {
-                // Verify TOTP code
+                // Initialize TwoFactorAuth library for TOTP verification
                 require_once 'vendor/autoload.php';
                 $tfa = new RobThree\Auth\TwoFactorAuth();
                 
+                // Verify the provided TOTP code against user's secret
                 if ($tfa->verifyCode($user['totp_secret'], $code)) {
-                    // 2FA successful - complete login
+                    // 2FA verification successful - complete login process
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['2fa_verified'] = true;
                     unset($_SESSION['pending_2fa_user_id']);
                     
+                    // Redirect to dashboard after successful 2FA
                     header('Location: dashboard.php');
                     exit();
                 } else {
