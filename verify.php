@@ -1,36 +1,44 @@
 <?php
+/**
+ * Email Verification Page
+ * Handles email verification process for new user registrations
+ * Validates verification tokens and activates user accounts
+ */
+
 require_once 'config.php';
 require_once 'ClassAutoload.php';
 
+// Initialize message variables for user feedback
 $message = '';
 $messageType = '';
 
+// Check if verification token is provided in URL
 if (isset($_GET['token'])) {
     $token = trim($_GET['token']);
     
-    // Validate token format (should be 64 character hex string)
+    // Validate token format - must be 64 character hexadecimal string
     if (!preg_match('/^[a-f0-9]{64}$/', $token)) {
         $message = 'Invalid verification token format.';
         $messageType = 'error';
     } else {
         try {
-            // Connect to database - Linux/Fedora standard connection
+            // Establish secure database connection with proper error handling
             $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
             $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            // Check if token exists and is not expired
+            // Query to find user with unverified email and matching token
             $stmt = $pdo->prepare("SELECT id, username, email, token_expiry FROM users WHERE verification_token = ? AND email_verified = 0");
             $stmt->execute([$token]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
             if ($user) {
-                // Check if token is expired
+                // Check if verification token has expired
                 if ($user['token_expiry'] && strtotime($user['token_expiry']) < time()) {
                     $message = 'Verification link has expired. Please sign up again.';
                     $messageType = 'error';
                 } else {
-                    // Mark email as verified
+                    // Successfully verify email and clean up token data
                     $updateStmt = $pdo->prepare("UPDATE users SET email_verified = 1, verification_token = NULL, token_expiry = NULL WHERE id = ?");
                     if ($updateStmt->execute([$user['id']])) {
                         $message = 'Email verified successfully! Welcome, ' . htmlspecialchars($user['username']) . '! You can now sign in to your account.';
@@ -41,7 +49,7 @@ if (isset($_GET['token'])) {
                     }
                 }
             } else {
-                // Check if user with this token already verified
+                // Check if user with this token has already been verified
                 $checkStmt = $pdo->prepare("SELECT id, username FROM users WHERE verification_token = ? AND email_verified = 1");
                 $checkStmt->execute([$token]);
                 $verifiedUser = $checkStmt->fetch(PDO::FETCH_ASSOC);
