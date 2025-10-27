@@ -1,35 +1,42 @@
 <?php
-// Start the session
+/**
+ * User Logout Handler
+ * Securely terminates user session and clears all authentication data
+ * Implements proper session cleanup to prevent session fixation attacks
+ */
+
+// Initialize session to access current session data
 session_start();
 
-// Regenerate session ID before destroying
+// Regenerate session ID to prevent session fixation attacks
+// This creates a new session ID and invalidates the old one
 session_regenerate_id(true);
 
-// Unset all session variables
+// Clear all session variables to remove user data
 $_SESSION = array();
 
-// Delete the session cookie
+// Securely delete the session cookie from client browser
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
     setcookie(
         session_name(),
-        '',
-        time() - 42000,
-        $params["path"],
-        $params["domain"],
-        $params["secure"],
-        $params["httponly"]
+        '',                    // Empty value
+        time() - 42000,        // Expire in the past
+        $params["path"],       // Same path as original cookie
+        $params["domain"],     // Same domain as original cookie
+        $params["secure"],     // Same security setting
+        $params["httponly"]    // Same httponly setting
     );
 }
 
-// Finally, destroy the session
+// Completely destroy the session data
 session_destroy();
 
-// Clear any existing output buffer
+// Clear any existing output buffer to prevent header issues
 if (ob_get_length()) {
     ob_clean();
 }
 
-// Redirect to signin page with a success message
+// Redirect user to signin page with logout confirmation
 header('Location: ' . SITE_URL . '/Signin.php?logout=success');
 exit();
