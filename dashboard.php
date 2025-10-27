@@ -1,50 +1,61 @@
 <?php
-// Start session and include necessary files
+/**
+ * Dashboard Page
+ * Main user dashboard showing orders, products, and account information
+ * Requires both login authentication and 2FA verification
+ */
+
+// Start session to maintain user state across page loads
 session_start();
 require_once __DIR__ . '/config.php';
 require_once __DIR__ . '/ClassAutoload.php';
 
-// Check if user is logged in and 2FA is verified
+// Authentication check - redirect to signin if not logged in
 if (!isset($_SESSION['user_id'])) {
     header('Location: ' . $conf['site_url'] . '/Signin.php');
     exit();
 }
 
-// Check if 2FA is verified
+// Two-Factor Authentication verification check
+// Redirect to 2FA verification page if not yet verified in this session
 if (!isset($_SESSION['2fa_verified']) || $_SESSION['2fa_verified'] !== true) {
     header('Location: ' . $conf['site_url'] . '/2fa_verify.php');
     exit();
 }
 
-// Get user data
+// Fetch user data from database
 try {
+    // Create PDO connection with proper error handling and fetch mode
     $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
     $conn = new PDO($dsn, $conf['db_user'], $conf['db_pass'], [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
     ]);
 
+    // Get current user's basic information (username and email)
     $stmt = $conn->prepare("SELECT username, email FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $user = $stmt->fetch();
 
+    // If user not found in database, destroy session and redirect
     if (!$user) {
         session_destroy();
         header('Location: ' . $conf['site_url'] . '/Signin.php?error=user_not_found');
         exit();
     }
 
-    // Get user's orders count
+    // Count total orders for the current user
     $orderStmt = $conn->prepare("SELECT COUNT(*) as order_count FROM orders WHERE customer_id = ?");
     $orderStmt->execute([$_SESSION['user_id']]);
     $orderCount = $orderStmt->fetch()['order_count'] ?? 0;
 
-    // Get featured products
+    // Fetch featured products (only active ones, limited to 6)
     $productStmt = $conn->prepare("SELECT * FROM products WHERE featured = 1 AND status = 'active' ORDER BY created_at DESC LIMIT 6");
     $productStmt->execute();
     $featuredProducts = $productStmt->fetchAll();
 
-    // Get user's recent orders
+    // Get user's 5 most recent orders with product details
+    // LEFT JOIN ensures we get product info even if product is deleted
     $recentOrdersStmt = $conn->prepare("
         SELECT o.*, p.name as product_name, p.image_url 
         FROM orders o 
@@ -57,8 +68,9 @@ try {
     $recentOrders = $recentOrdersStmt->fetchAll();
 
 } catch (PDOException $e) {
+    // Log database errors for debugging
     error_log("Database error: " . $e->getMessage());
-    // Set default values if DB fails
+    // Set default fallback values if database query fails
     $user = ['username' => 'User', 'email' => 'user@example.com'];
     $orderCount = 0;
     $featuredProducts = [];
