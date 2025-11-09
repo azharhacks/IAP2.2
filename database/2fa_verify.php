@@ -31,7 +31,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->execute([$_SESSION['pending_2fa_user_id']]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
-            if ($user && $user['totp_secret']) {
+            if ($user) {
+                // Check if user has TOTP secret, if not generate one
+                if (!$user['totp_secret']) {
+                    // Generate TOTP secret for existing user
+                    $totpSecret = '';
+                    $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'; // Base32 alphabet
+                    for ($i = 0; $i < 32; $i++) {
+                        $totpSecret .= $chars[random_int(0, 31)];
+                    }
+                    
+                    // Update user with new TOTP secret
+                    $updateStmt = $pdo->prepare("UPDATE users SET totp_secret = ? WHERE id = ?");
+                    $updateStmt->execute([$totpSecret, $user['id']]);
+                    
+                    $user['totp_secret'] = $totpSecret;
+                    $_SESSION['totp_secret'] = $totpSecret;
+                }
+                
                 // Verify TOTP code
                 require_once 'vendor/autoload.php';
                 $tfa = new RobThree\Auth\TwoFactorAuth();
@@ -41,9 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['email'] = $user['email'];
                     $_SESSION['2fa_verified'] = true;
-                    unset($_SESSION['pending_2fa_user_id']);
                     
-                    header('Location: dashboard.php');
+                    // Check for redirect URL
+                    $redirectUrl = $_SESSION['redirect_after_2fa'] ?? 'dashboard.php';
+                    unset($_SESSION['pending_2fa_user_id']);
+                    unset($_SESSION['redirect_after_2fa']);
+                    
+                    header('Location: ' . $redirectUrl);
                     exit();
                 } else {
                     $error = 'Invalid authentication code. Please try again.';

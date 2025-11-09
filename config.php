@@ -24,7 +24,7 @@ $conf['db_name'] = 'auth_db';
 // Email configuration
 $conf['mail_type'] = 'smtp'; 
 $conf['smtp_host'] = 'smtp.gmail.com';
-$conf['smtp_user'] = 'devyan.jethwa@strasthmore.edu';
+$conf['smtp_user'] = 'devyan.jethwa@strathmore.edu';
 $conf['smtp_pass'] = 'hvmc tezo jexn lbkg';
 $conf['smtp_port'] = 465;
 $conf['smtp_secure'] = 'ssl';

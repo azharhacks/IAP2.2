@@ -124,11 +124,18 @@ class Forms {
             if ($user && password_verify($password, $user['password'])) {
                 if ($user['email_verified'] == 1) {
                     // User is verified, set session for 2FA verification
-                    session_start();
+                    if (session_status() === PHP_SESSION_NONE) {
+                        session_start();
+                    }
                     $_SESSION['pending_2fa_user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
                     $_SESSION['email'] = $email;
                     $_SESSION['totp_secret'] = $user['totp_secret'];
+                    
+                    // Store redirect URL if provided
+                    if (isset($_GET['redirect'])) {
+                        $_SESSION['redirect_after_2fa'] = $_GET['redirect'];
+                    }
                     
                     // Redirect to 2FA verification
                     header("Location: 2fa_verify.php");

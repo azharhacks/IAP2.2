@@ -27,7 +27,10 @@ class SendMail {
             $mail->Port = $conf['smtp_port'];
             
             // Disable debug output in production
-            $mail->SMTPDebug = 0; // Set to 2 for debugging
+            $mail->SMTPDebug = 2; // Set to 2 for debugging
+            $mail->Debugoutput = function($str, $level) {
+                error_log("SMTP Debug ($level): $str");
+            };
             
             // Timeout settings
             $mail->Timeout = 30;
