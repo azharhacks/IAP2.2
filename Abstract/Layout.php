@@ -92,6 +92,8 @@ class Layout {
             box-shadow: 0 8px 32px rgba(0,0,0,0.1);
             border-bottom: 1px solid rgba(255,255,255,0.1);
             padding: 1rem 0;
+            z-index: 1040;
+            position: relative;
         }
         
         .navbar-brand {
@@ -190,6 +192,8 @@ class Layout {
             box-shadow: var(--card-shadow-hover);
             padding: 0.5rem 0;
             margin-top: 0.5rem;
+            z-index: 1050 !important;
+            position: absolute !important;
         }
         
         .dropdown-item {
@@ -204,6 +208,19 @@ class Layout {
             color: white;
             border-radius: var(--border-radius-sm);
             transform: translateX(5px);
+        }
+        
+        /* Ensure dropdown is above other content */
+        .nav-item.dropdown {
+            position: relative;
+        }
+        
+        .dropdown-toggle::after {
+            transition: var(--transition);
+        }
+        
+        .dropdown-toggle[aria-expanded="true"]::after {
+            transform: rotate(180deg);
         }
         
         /* Mobile menu improvements */
