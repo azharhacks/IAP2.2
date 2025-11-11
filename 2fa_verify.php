@@ -26,8 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass']);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             
-            // Get user's TOTP secret
-            $stmt = $pdo->prepare("SELECT id, totp_secret, email FROM users WHERE id = ?");
+            // Get user's TOTP secret and role
+            $stmt = $pdo->prepare("SELECT id, totp_secret, email, role FROM users WHERE id = ?");
             $stmt->execute([$_SESSION['pending_2fa_user_id']]);
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             
@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // 2FA successful - complete login
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['email'] = $user['email'];
+                    $_SESSION['role'] = $user['role'];
                     $_SESSION['2fa_verified'] = true;
                     
                     // Check for redirect URL

@@ -23,6 +23,9 @@ class ProductManager {
      * @return array Featured products
      */
     public function getFeaturedProducts($limit = 6) {
+        // Ensure limit is an integer to prevent SQL injection
+        $limit = (int)$limit;
+        
         $stmt = $this->pdo->prepare("
             SELECT p.*, b.name as brand_name, c.name as category_name,
                    pi.image_url, pi.alt_text,
@@ -36,9 +39,9 @@ class ProductManager {
             WHERE p.is_featured = TRUE AND p.is_active = TRUE AND p.stock_quantity > 0
             GROUP BY p.id
             ORDER BY p.created_at DESC
-            LIMIT ?
+            LIMIT " . $limit . "
         ");
-        $stmt->execute([$limit]);
+        $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
@@ -188,6 +191,9 @@ class ProductManager {
      * @return array Related products
      */
     public function getRelatedProducts($productId, $limit = 4) {
+        // Ensure limit is an integer to prevent SQL injection
+        $limit = (int)$limit;
+        
         $stmt = $this->pdo->prepare("
             SELECT p2.*, b.name as brand_name, c.name as category_name,
                    pi.image_url, pi.alt_text,
@@ -202,9 +208,9 @@ class ProductManager {
             WHERE p1.id = ? AND p2.id != ? AND p2.is_active = TRUE AND p2.stock_quantity > 0
             GROUP BY p2.id
             ORDER BY RAND()
-            LIMIT ?
+            LIMIT " . $limit . "
         ");
-        $stmt->execute([$productId, $productId, $limit]);
+        $stmt->execute([$productId, $productId]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
@@ -250,14 +256,17 @@ class ProductManager {
      * @return array Search suggestions
      */
     public function searchSuggestions($query, $limit = 5) {
+        // Ensure limit is an integer to prevent SQL injection
+        $limit = (int)$limit;
+        
         $stmt = $this->pdo->prepare("
             SELECT DISTINCT p.name, p.id
             FROM products p
             WHERE p.name LIKE ? AND p.is_active = TRUE
             ORDER BY p.name
-            LIMIT ?
+            LIMIT " . $limit . "
         ");
-        $stmt->execute(['%' . $query . '%', $limit]);
+        $stmt->execute(['%' . $query . '%']);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

@@ -45,7 +45,8 @@ try {
 
     // Get dashboard statistics
     $featuredProducts = $productManager->getFeaturedProducts(6);
-    $recentOrders = $orderManager->getUserOrders($_SESSION['user_id'], 1, 5); // Last 5 orders
+    $ordersData = $orderManager->getUserOrders($_SESSION['user_id'], 1, 5); // Last 5 orders
+    $recentOrders = $ordersData['orders'] ?? []; // Extract the orders array
     $orderStats = $orderManager->getOrderStats($_SESSION['user_id']);
     $cartTotals = $cartManager->getCartTotals($_SESSION['user_id']);
     
@@ -83,10 +84,30 @@ $layout->breadcrumb([
 ]);
 
 $layout->contentStart();
+
+// Check for access denied error
+$access_error = '';
+if (isset($_GET['error']) && $_GET['error'] === 'access_denied') {
+    $access_error = 'Access denied. You need administrator privileges to access that page.';
+}
 ?>
 
 <!-- Dashboard Content -->
 <div class="container-fluid py-4">
+    
+    <?php if ($access_error): ?>
+    <!-- Access Denied Alert -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Access Denied:</strong> <?php echo htmlspecialchars($access_error); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+    
     <!-- Welcome Section -->
     <div class="row mb-4">
         <div class="col-12">
@@ -193,18 +214,18 @@ $layout->contentStart();
                         <div class="col-md-4 mb-3">
                             <div class="card border">
                                 <div class="card-body">
-                                    <h6 class="card-title">Order #<?php echo htmlspecialchars($order['id']); ?></h6>
+                                    <h6 class="card-title">Order #<?php echo htmlspecialchars($order['order_number'] ?? $order['id']); ?></h6>
                                     <p class="text-muted small mb-2">
-                                        <?php echo date('M j, Y', strtotime($order['created_at'])); ?>
+                                        <?php echo date('M j, Y', strtotime($order['created_at'] ?? 'now')); ?>
                                     </p>
                                     <p class="mb-2">
-                                        <strong>$<?php echo number_format($order['total'], 2); ?></strong>
+                                        <strong>KSh <?php echo number_format($order['total_amount'] ?? 0, 2); ?></strong>
                                     </p>
                                     <span class="badge bg-<?php 
-                                        echo $order['status'] === 'completed' ? 'success' : 
+                                        echo $order['status'] === 'delivered' ? 'success' : 
                                             ($order['status'] === 'pending' ? 'warning' : 'info'); 
                                     ?>">
-                                        <?php echo ucfirst($order['status']); ?>
+                                        <?php echo ucfirst($order['status'] ?? 'pending'); ?>
                                     </span>
                                 </div>
                             </div>
