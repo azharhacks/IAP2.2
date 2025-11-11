@@ -31,3 +31,16 @@ $conf['smtp_secure'] = 'ssl';
 $conf['smtp_recepient']='Devyan';
 $conf['recepient_email']='vrindevj@gmail.com';
 
+// M-Pesa Configuration
+$conf['mpesa'] = [
+    'consumer_key' => 'cXfEmCCWj9N5fd2Z1Oz541C9n90RjtECBS1Ff6pKVWSSh88H',
+    'consumer_secret' => 'UBbIDpR2sqPBDshDPaiAdyEIgAGX3FvLEg89ZXlRffjX2K8plnCmnlUI5lQwfiPg',
+    'environment' => 'sandbox', // Change to 'production' for live
+    'short_code' => '174379', // Safaricom test shortcode
+    'passkey' => 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919', // Safaricom test passkey
+    'callback_url' => 'https://webhook.site/95e84f8b-c43d-4a27-b7de-0a1e5f95e6c8',
+    'account_reference' => 'OnlineStore',
+    'transaction_desc' => 'Online Store Payment',
+    'timeout_url' => 'https://webhook.site/95e84f8b-c43d-4a27-b7de-0a1e5f95e6c8'
+];
+

@@ -1,11 +1,22 @@
-# Personal configuration files (Person 3 specific)
-Config.php
-
-# Database credentials and personal settings
+# Sensitive configuration files
 config.php
+*.env
 
-# Test files
-test_*.php
+# Database files
+*.sql
+database/
+
+# Vendor dependencies
+vendor/
+node_modules/
+
+# Log files
+*.log
+logs/
+
+# Cache files
+cache/
+tmp/
 
 # IDE files
 .vscode/
@@ -16,10 +27,3 @@ test_*.php
 # OS files
 .DS_Store
 Thumbs.db
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-*.temp
