@@ -1,4 +1,12 @@
 <?php
+/**
+ * User Logout Handler
+ * Securely logs out users by destroying session and clearing cookies
+ */
+
+// Include configuration
+require_once __DIR__ . '/config.php';
+
 // Start the session
 session_start();
 
@@ -22,6 +30,11 @@ if (ini_get("session.use_cookies")) {
     );
 }
 
+// Also clear any remember me cookies if they exist
+if (isset($_COOKIE['remember_token'])) {
+    setcookie('remember_token', '', time() - 3600, '/');
+}
+
 // Finally, destroy the session
 session_destroy();
 
@@ -31,5 +44,5 @@ if (ob_get_length()) {
 }
 
 // Redirect to signin page with a success message
-header('Location: ' . SITE_URL . '/Signin.php?logout=success');
+header('Location: ' . $conf['site_url'] . '/Signin.php?logout=success');
 exit();
