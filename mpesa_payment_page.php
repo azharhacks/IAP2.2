@@ -376,11 +376,10 @@ $customJS = '
                 // Start checking payment status
                 startStatusCheck();
                 
-                // Set timeout for payment (5 minutes)
+                // Set timeout for payment (2 minutes) - show manual option
                 timeoutTimer = setTimeout(() => {
-                    showStatus("error", "Payment timeout. Please try again.");
-                    resetPaymentForm();
-                }, 300000); // 5 minutes
+                    showManualCompletionOption();
+                }, 120000); // 2 minutes
                 
             } else {
                 showStatus("error", result.message || "Failed to initiate payment");
@@ -525,6 +524,67 @@ $customJS = '
             }
         });
     });
+    
+    function showManualCompletionOption() {
+        clearInterval(statusCheckInterval);
+        
+        const statusHTML = "<div class=\\"alert alert-warning\\">" +
+            "<h5><i class=\\"fas fa-clock me-2\\"></i>Payment Taking Too Long?</h5>" +
+            "<p>If you have completed the payment on your phone but it is not reflecting here, you can:</p>" +
+            "<div class=\\"d-grid gap-2 d-md-flex justify-content-md-center\\">" +
+                "<button onclick=\\"manualComplete()\\" class=\\"btn btn-success me-md-2\\">" +
+                    "<i class=\\"fas fa-check me-2\\"></i>I have Paid - Complete Order" +
+                "</button>" +
+                "<button onclick=\\"resetPaymentForm()\\" class=\\"btn btn-outline-secondary\\">" +
+                    "<i class=\\"fas fa-redo me-2\\"></i>Try Again" +
+                "</button>" +
+                "<a href=\\"test_callback.php\\" target=\\"_blank\\" class=\\"btn btn-outline-primary\\">" +
+                    "<i class=\\"fas fa-tools me-2\\"></i>Test Tool" +
+                "</a>" +
+            "</div>" +
+            "<small class=\\"text-muted mt-2 d-block\\">" +
+                "<strong>Checkout ID:</strong> " + checkoutRequestId +
+            "</small>" +
+        "</div>";
+        
+        document.getElementById("statusCard").innerHTML = statusHTML;
+        document.getElementById("statusCard").className = "status-card show";
+    }
+    
+    async function manualComplete() {
+        const receiptNumber = prompt("Enter M-Pesa receipt number (or leave blank for auto-generated):");
+        
+        try {
+            const response = await fetch("mpesa_status_api.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    action: "manual_complete",
+                    checkout_request_id: checkoutRequestId,
+                    receipt_number: receiptNumber || undefined
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showStatus("success", "Payment completed successfully! Redirecting to order confirmation...");
+                updateStepIndicator(3);
+                
+                setTimeout(() => {
+                    window.location.href = "order_confirmation.php?order=' . $orderId . '";
+                }, 3000);
+            } else {
+                showStatus("error", result.error || "Failed to complete payment manually");
+            }
+            
+        } catch (error) {
+            console.error("Manual completion error:", error);
+            showStatus("error", "Network error. Please try again.");
+        }
+    }
 ';
 
 $layout->header('M-Pesa Payment', $customCSS);
