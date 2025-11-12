@@ -16,13 +16,7 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'super_a
     exit();
 }
 
-try {
-    $pdo = new PDO("mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8", 
-                   $conf['db_user'], $conf['db_pass']);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
+// Using global $pdo from config.php
 
 $orderManager = new OrderManager($pdo);
 
@@ -176,7 +170,7 @@ $layout->header('Admin - Order Management');
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-warning text-white">
+                    <div class="card bg-primary text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
@@ -191,7 +185,7 @@ $layout->header('Admin - Order Management');
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-info text-white">
+                    <div class="card bg-primary text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
@@ -206,7 +200,7 @@ $layout->header('Admin - Order Management');
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-success text-white">
+                    <div class="card bg-primary text-white">
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
@@ -333,7 +327,7 @@ $layout->header('Admin - Order Management');
                                                 </div>
                                             </td>
                                             <td>
-                                                <span class="badge bg-info"><?= $order['item_count'] ?> items</span>
+                                                <span class="badge bg-primary"><?= $order['item_count'] ?> items</span>
                                             </td>
                                             <td>
                                                 <strong>KSh <?= number_format($order['total_amount'], 2) ?></strong>
@@ -497,14 +491,30 @@ $layout->header('Admin - Order Management');
 <script>
 function loadOrderDetails(orderId) {
     const content = document.getElementById('orderDetailsContent');
+    content.innerHTML = '<div class="text-center py-4"><div class="spinner-border" role="status"></div></div>';
     
     fetch(`order_details.php?id=${orderId}`)
-        .then(response => response.text())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            return response.text();
+        })
         .then(html => {
+            if (html.includes('File not found') || html.includes('404 Not Found')) {
+                throw new Error('Order details page not found');
+            }
             content.innerHTML = html;
         })
         .catch(error => {
-            content.innerHTML = '<div class="alert alert-danger">Failed to load order details.</div>';
+            console.error('Error loading order details:', error);
+            content.innerHTML = `
+                <div class="alert alert-danger">
+                    <h5>Unable to load order details</h5>
+                    <p>Error: ${error.message}</p>
+                    <small>Check browser console for more details.</small>
+                </div>
+            `;
         });
 }
 

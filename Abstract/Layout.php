@@ -43,11 +43,22 @@ class Layout {
     <!-- Custom Global Styles -->
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #d946ef 100%);
-            --secondary-gradient: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            --dark-gradient: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            /* Orange Theme Colors */
+            --primary-color: #ff6b35;
+            --primary-dark: #e55a2e;
+            --primary-light: #ff8a5c;
+            --secondary-color: #f97316;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            
+            /* Bootstrap Color Overrides */
+            --bs-primary: #ff6b35;
+            --bs-primary-rgb: 255, 107, 53;
+            --bs-secondary: #f97316;
+            --bs-secondary-rgb: 249, 115, 22;
+            
+            /* Design System */
             --card-shadow: 0 4px 20px rgba(0,0,0,0.08);
             --card-shadow-hover: 0 12px 40px rgba(0,0,0,0.15);
             --border-radius: 16px;
@@ -62,14 +73,14 @@ class Layout {
         }
         
         body { 
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: #ff6b35;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #1e293b;
             position: relative;
         }
         
-        /* Animated background particles */
+        /* Orange background overlay */
         body::before {
             content: '';
             position: fixed;
@@ -77,10 +88,7 @@ class Layout {
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 200, 255, 0.1) 0%, transparent 50%);
+            background: rgba(255, 107, 53, 0.05);
             pointer-events: none;
             z-index: -1;
         }
@@ -99,11 +107,8 @@ class Layout {
         .navbar-brand {
             font-weight: 800;
             font-size: 1.75rem;
-            background: linear-gradient(45deg, #fff, #e2e8f0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: 0 0 30px rgba(255,255,255,0.5);
+            color: #fff;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
             transition: var(--transition);
         }
         
@@ -113,11 +118,9 @@ class Layout {
         }
         
         .navbar-brand i {
-            background: linear-gradient(45deg, #fbbf24, #f59e0b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #fff;
             margin-right: 0.5rem;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
             animation: pulse 2s infinite;
         }
         
@@ -143,7 +146,7 @@ class Layout {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.3), transparent);
             transition: var(--transition);
         }
         
@@ -204,7 +207,7 @@ class Layout {
         }
         
         .dropdown-item:hover {
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             color: white;
             border-radius: var(--border-radius-sm);
             transform: translateX(5px);
@@ -259,7 +262,7 @@ class Layout {
             left: 0;
             right: 0;
             height: 4px;
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             transform: scaleX(0);
             transition: var(--transition);
         }
@@ -295,7 +298,7 @@ class Layout {
         }
         
         .card-gradient {
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             color: white;
         }
         
@@ -306,7 +309,7 @@ class Layout {
         
         /* Hero Section */
         .hero-section { 
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             color: white; 
             padding: 6rem 2rem; 
             border-radius: var(--border-radius-lg);
@@ -323,9 +326,7 @@ class Layout {
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
-                radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            background: rgba(255, 107, 53, 0.1);
             pointer-events: none;
         }
         
@@ -393,7 +394,7 @@ class Layout {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.4), transparent);
             transition: var(--transition);
         }
         
@@ -410,17 +411,72 @@ class Layout {
             transform: translateY(-1px);
         }
         
+        /* Bootstrap Primary Color Overrides - Orange Theme */
         .btn-primary {
-            background: var(--primary-gradient);
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
         }
         
-        .btn-primary:hover {
-            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.6);
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+            background-color: var(--primary-dark) !important;
+            border-color: var(--primary-dark) !important;
+            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.6);
+        }
+        
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        
+        .border-primary {
+            border-color: var(--primary-color) !important;
+        }
+        
+        .badge.bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .card-header.bg-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        
+        /* Additional Bootstrap Component Overrides */
+        .alert-primary {
+            background-color: rgba(255, 107, 53, 0.1) !important;
+            border-color: rgba(255, 107, 53, 0.2) !important;
+            color: var(--primary-dark) !important;
+        }
+        
+        .page-item.active .page-link {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        
+        .page-link {
+            color: var(--primary-color) !important;
+        }
+        
+        .page-link:hover {
+            color: var(--primary-dark) !important;
+            background-color: rgba(255, 107, 53, 0.1) !important;
+        }
+        
+        .progress-bar.bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25) !important;
         }
         
         .btn-success {
-            background: var(--success-gradient);
+            background: var(--success-color);
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
         
@@ -429,7 +485,7 @@ class Layout {
         }
         
         .btn-warning {
-            background: var(--secondary-gradient);
+            background: var(--secondary-color);
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
         }
         
@@ -440,12 +496,13 @@ class Layout {
         
         .btn-outline-primary {
             border: 2px solid transparent;
-            background: linear-gradient(white, white) padding-box, var(--primary-gradient) border-box;
+            background: white;
+            border: 2px solid var(--primary-color);
             color: #6366f1;
         }
         
         .btn-outline-primary:hover {
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             color: white;
         }
         
@@ -479,7 +536,7 @@ class Layout {
             left: 0;
             right: 0;
             height: 1px;
-            background: var(--primary-gradient);
+            background: var(--primary-color);
         }
         
         footer::after {
@@ -489,9 +546,7 @@ class Layout {
             left: 0;
             right: 0;
             bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            background: rgba(255, 107, 53, 0.05);
             pointer-events: none;
         }
         
@@ -505,7 +560,7 @@ class Layout {
             margin-bottom: 1.5rem;
             font-weight: 700;
             font-size: 1.2rem;
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -558,7 +613,7 @@ class Layout {
         }
         
         .social-links a:hover {
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             transform: translateY(-3px) scale(1.1);
             box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
         }
@@ -619,7 +674,7 @@ class Layout {
         
         /* Utility Classes */
         .text-gradient {
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -627,7 +682,7 @@ class Layout {
         }
         
         .text-gradient-secondary {
-            background: var(--secondary-gradient);
+            background: var(--secondary-color);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -683,7 +738,7 @@ class Layout {
             border-radius: 0;
             border: none;
             padding: 0.75rem 1.5rem;
-            background: var(--primary-gradient);
+            background: var(--primary-color);
         }
         
         /* Breadcrumb styling */
@@ -840,7 +895,7 @@ class Layout {
     public function navbar($activePage = '') {
         global $conf;
 ?>
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background: var(--primary-gradient);">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: var(--primary-color);">
         <div class="container">
             <a class="navbar-brand" href="Index.php">
                 <i class="fas fa-shopping-bag me-2"></i><?php echo htmlspecialchars($conf['site_name']); ?>
@@ -917,7 +972,7 @@ class Layout {
                             <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'super_admin'])): ?>
                             <li><a class="dropdown-item" href="admin/orders.php"><i class="fas fa-shopping-cart me-2"></i>Order Management</a></li>
                             <li><a class="dropdown-item" href="admin/users.php"><i class="fas fa-users-cog me-2"></i>User Management</a></li>
-                            <li><a class="dropdown-item" href="admin/mpesa_transactions.php"><i class="fas fa-mobile-alt me-2" style="color: #00D4AA;"></i>M-Pesa Transactions</a></li>
+                            <li><a class="dropdown-item" href="admin/mpesa_simple.php"><i class="fas fa-mobile-alt me-2" style="color: #00D4AA;"></i>M-Pesa Transactions</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <?php endif; ?>
                             <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>

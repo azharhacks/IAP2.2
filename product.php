@@ -366,7 +366,7 @@ if ($product['compare_price'] && $product['compare_price'] > $product['price']) 
                                 <small class="text-muted">
                                     <?php echo date('M j, Y', strtotime($review['created_at'])); ?>
                                     <?php if ($review['is_verified_purchase']): ?>
-                                        <span class="badge bg-success ms-1">Verified Purchase</span>
+                                        <span class="badge bg-primary ms-1">Verified Purchase</span>
                                     <?php endif; ?>
                                 </small>
                             </div>

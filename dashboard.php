@@ -163,36 +163,36 @@ if (isset($_GET['error']) && $_GET['error'] === 'access_denied') {
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
-                    <div class="feature-icon bg-success-light mb-3">
-                        <i class="fas fa-list text-success"></i>
+                    <div class="feature-icon bg-primary-light mb-3">
+                        <i class="fas fa-list text-primary"></i>
                     </div>
                     <h5>My Orders</h5>
                     <p class="text-muted small">Track your order history</p>
-                    <a href="orders.php" class="btn btn-outline-success btn-sm">View Orders</a>
+                    <a href="orders.php" class="btn btn-outline-primary btn-sm">View Orders</a>
                 </div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
-                    <div class="feature-icon bg-warning-light mb-3">
-                        <i class="fas fa-shopping-basket text-warning"></i>
+                    <div class="feature-icon bg-primary-light mb-3">
+                        <i class="fas fa-shopping-basket text-primary"></i>
                     </div>
                     <h5>Shopping Cart</h5>
                     <p class="text-muted small">Review your cart items</p>
-                    <a href="cart.php" class="btn btn-outline-warning btn-sm">View Cart</a>
+                    <a href="cart.php" class="btn btn-outline-primary btn-sm">View Cart</a>
                 </div>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 mb-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body text-center">
-                    <div class="feature-icon bg-info-light mb-3">
-                        <i class="fas fa-user-circle text-info"></i>
+                    <div class="feature-icon bg-primary-light mb-3">
+                        <i class="fas fa-user-circle text-primary"></i>
                     </div>
                     <h5>Account Settings</h5>
                     <p class="text-muted small">Manage your profile</p>
-                    <a href="#" class="btn btn-outline-info btn-sm">Settings</a>
+                    <a href="#" class="btn btn-outline-primary btn-sm">Settings</a>
                 </div>
             </div>
         </div>

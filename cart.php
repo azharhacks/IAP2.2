@@ -157,7 +157,7 @@ $layout->contentStart();
                         <strong>KSh <?php echo number_format($remaining); ?> to go</strong>
                     </div>
                     <div class="progress free-shipping-progress">
-                        <div class="progress-bar bg-success" style="width: <?php echo $progress; ?>%"></div>
+                        <div class="progress-bar bg-primary" style="width: <?php echo $progress; ?>%"></div>
                     </div>
                 </div>
                 <?php else: ?>
@@ -188,7 +188,7 @@ $layout->contentStart();
                                 <?php if ($item['brand_name']): ?>
                                 <small class="text-muted">Brand: <?php echo htmlspecialchars($item['brand_name']); ?></small><br>
                                 <?php endif; ?>
-                                <small class="text-success">
+                                <small class="text-primary">
                                     <i class="fas fa-check-circle me-1"></i>In Stock (<?php echo $item['stock_quantity']; ?> available)
                                 </small>
                             </div>
@@ -266,7 +266,7 @@ $layout->contentStart();
                             <?php if ($cartTotals['shipping_cost'] > 0): ?>
                                 KSh <?php echo number_format($cartTotals['shipping_cost']); ?>
                             <?php else: ?>
-                                <span class="text-success">FREE</span>
+                                <span class="text-primary">FREE</span>
                             <?php endif; ?>
                         </span>
                     </div>

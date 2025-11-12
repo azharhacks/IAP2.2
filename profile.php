@@ -423,9 +423,9 @@ $layout->contentStart();
                                        value="<?php echo htmlspecialchars($userData['email']); ?>" required>
                                 <div class="form-text">
                                     <?php if ($userData['email_verified']): ?>
-                                        <i class="fas fa-check-circle text-success me-1"></i>Email verified
+                                        <i class="fas fa-check-circle text-primary me-1"></i>Email verified
                                     <?php else: ?>
-                                        <i class="fas fa-exclamation-triangle text-warning me-1"></i>Email not verified
+                                        <i class="fas fa-exclamation-triangle text-primary me-1"></i>Email not verified
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -480,15 +480,15 @@ $layout->contentStart();
                                 <h6 class="mb-1">2FA Status</h6>
                                 <p class="text-muted mb-0">
                                     <?php if ($userData['totp_secret']): ?>
-                                        <i class="fas fa-shield-alt text-success me-1"></i>Two-factor authentication is enabled
+                                        <i class="fas fa-shield-alt text-primary me-1"></i>Two-factor authentication is enabled
                                     <?php else: ?>
-                                        <i class="fas fa-shield text-warning me-1"></i>Two-factor authentication is not set up
+                                        <i class="fas fa-shield text-primary me-1"></i>Two-factor authentication is not set up
                                     <?php endif; ?>
                                 </p>
                             </div>
                             <div>
                                 <?php if ($userData['totp_secret']): ?>
-                                    <span class="badge bg-success">Enabled</span>
+                                    <span class="badge bg-primary">Enabled</span>
                                 <?php else: ?>
                                     <a href="database/2fa_verify.php" class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-plus me-1"></i>Setup 2FA

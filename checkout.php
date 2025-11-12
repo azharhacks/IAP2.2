@@ -363,7 +363,7 @@ $layout->contentStart();
                                         <i class="fas fa-shield-alt me-1"></i>
                                         Secure mobile money payment
                                     </small>
-                                    <small class="d-block text-success mt-1">
+                                    <small class="d-block text-primary mt-1">
                                         <i class="fas fa-check me-1"></i>
                                         Instant payment confirmation
                                     </small>
@@ -374,13 +374,13 @@ $layout->contentStart();
                             <div class="payment-method" onclick="selectPayment('cod')">
                                 <input type="radio" name="payment_method" value="cod" id="payment_cod">
                                 <label for="payment_cod" class="form-label w-100">
-                                    <i class="fas fa-money-bill text-warning me-2"></i>
+                                    <i class="fas fa-money-bill text-primary me-2"></i>
                                     <strong>Cash on Delivery</strong>
                                     <small class="d-block text-muted mt-1">
                                         <i class="fas fa-truck me-1"></i>
                                         Pay when your order arrives
                                     </small>
-                                    <small class="d-block text-info mt-1">
+                                    <small class="d-block text-primary mt-1">
                                         <i class="fas fa-info-circle me-1"></i>
                                         Additional KSh 200 COD fee applies
                                     </small>
@@ -456,7 +456,7 @@ $layout->contentStart();
                         <?php if ($cartTotals['shipping_cost'] > 0): ?>
                             KSh <?php echo number_format($cartTotals['shipping_cost']); ?>
                         <?php else: ?>
-                            <span class="text-success">FREE</span>
+                            <span class="text-primary">FREE</span>
                         <?php endif; ?>
                     </span>
                 </div>

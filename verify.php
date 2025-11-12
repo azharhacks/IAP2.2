@@ -99,7 +99,7 @@ if (isset($_GET['token'])) {
         <div class="verification-container text-center">
             <div class="mb-4">
                 <?php if ($messageType == 'success'): ?>
-                    <div class="text-success">
+                    <div class="text-primary">
                         <i class="bi bi-check-circle" style="font-size: 3rem;"></i>
                     </div>
                 <?php else: ?>

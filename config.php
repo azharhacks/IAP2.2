@@ -31,6 +31,19 @@ $conf['smtp_secure'] = 'ssl';
 $conf['smtp_recepient']='Devyan';
 $conf['recepient_email']='vrindevj@gmail.com';
 
+// Global PDO Database Connection
+try {
+    $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8";
+    $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass'], [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false
+    ]);
+} catch (PDOException $e) {
+    error_log("Database connection failed: " . $e->getMessage());
+    die("Database connection failed. Please check your configuration.");
+}
+
 // M-Pesa Configuration
 $conf['mpesa'] = [
     'consumer_key' => 'cXfEmCCWj9N5fd2Z1Oz541C9n90RjtECBS1Ff6pKVWSSh88H',

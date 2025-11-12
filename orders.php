@@ -227,7 +227,7 @@ $orders = $orderResult['orders'];
                                     case 'delivered': $progress = 100; break;
                                 }
                                 ?>
-                                <div class="progress-bar bg-success" style="width: <?php echo $progress; ?>%"></div>
+                                <div class="progress-bar bg-primary" style="width: <?php echo $progress; ?>%"></div>
                             </div>
                             <div class="d-flex justify-content-between mt-2">
                                 <small class="text-muted">Confirmed</small>

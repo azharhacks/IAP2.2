@@ -333,7 +333,7 @@ $layout->contentStart();
                                 <?php if ($product['review_count'] > 0): ?>
                                 <div class="mb-2">
                                     <div class="d-flex align-items-center">
-                                        <div class="text-warning me-1">
+                                        <div class="text-primary me-1">
                                             <?php for ($i = 1; $i <= 5; $i++): ?>
                                                 <i class="fas fa-star<?php echo $i <= round($product['avg_rating']) ? '' : '-o'; ?>"></i>
                                             <?php endfor; ?>

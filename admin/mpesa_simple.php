@@ -17,16 +17,7 @@ if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], ['admin', 'super_a
     exit('Access denied - Admin privileges required');
 }
 
-try {
-    // Initialize database connection
-    $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
-    $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
+// Using global $pdo from config.php
 
 // Get basic transaction data
 $stmt = $pdo->query("SELECT COUNT(*) as total FROM mpesa_transactions");

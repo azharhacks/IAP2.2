@@ -105,7 +105,7 @@ $ObjLayout->banner($conf,
     <div class="col-lg-3 col-md-6">
         <div class="card card-custom h-100 text-center p-4">
             <div class="mb-3">
-                <i class="fas fa-shield-alt text-success fs-1"></i>
+                <i class="fas fa-shield-alt text-primary fs-1"></i>
             </div>
             <h5 class="card-title">Secure Shopping</h5>
             <p class="card-text text-muted">Your data is protected with 2FA and encrypted transactions.</p>
@@ -115,7 +115,7 @@ $ObjLayout->banner($conf,
     <div class="col-lg-3 col-md-6">
         <div class="card card-custom h-100 text-center p-4">
             <div class="mb-3">
-                <i class="fas fa-award text-warning fs-1"></i>
+                <i class="fas fa-award text-primary fs-1"></i>
             </div>
             <h5 class="card-title">Quality Products</h5>
             <p class="card-text text-muted">Carefully curated products from trusted brands and suppliers.</p>
@@ -125,7 +125,7 @@ $ObjLayout->banner($conf,
     <div class="col-lg-3 col-md-6">
         <div class="card card-custom h-100 text-center p-4">
             <div class="mb-3">
-                <i class="fas fa-headset text-info fs-1"></i>
+                <i class="fas fa-headset text-primary fs-1"></i>
             </div>
             <h5 class="card-title">24/7 Support</h5>
             <p class="card-text text-muted">Our customer service team is always ready to help you.</p>
