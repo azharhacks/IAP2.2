@@ -459,7 +459,7 @@ $statusHistory = $stmt->fetchAll();
                         <i class="fas fa-phone text-primary"></i>
                         <div class="mt-2">
                             <strong>Call Us</strong>
-                            <br><small class="text-muted">+254 700 000 000</small>
+                            <br><small class="text-muted">+254 795 550 352</small>
                         </div>
                     </div>
                     <div class="col-md-4">

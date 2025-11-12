@@ -8,7 +8,7 @@ ini_set('display_startup_errors', 1);
 $conf['site_timezone'] = 'Africa/Nairobi';
 
 // Site information
-$conf['site_name'] = 'Online Store';
+$conf['site_name'] = 'SMARTDUKA';
 $conf['site_url'] = 'http://localhost/your-project';
 $conf['admin_email'] = 'your-email@example.com';
 
@@ -40,7 +40,7 @@ $conf['mpesa'] = [
     'short_code' => 'your_short_code',
     'passkey' => 'your_passkey',
     'callback_url' => $conf['site_url'] . '/mpesa_callback.php',
-    'account_reference' => 'OnlineStore',
-    'transaction_desc' => 'Online Store Payment',
+    'account_reference' => 'SMARTDUKA',
+    'transaction_desc' => 'SMARTDUKA Payment',
     'timeout_url' => $conf['site_url'] . '/mpesa_timeout.php'
 ];

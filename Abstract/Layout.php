@@ -18,7 +18,7 @@ class Layout {
         }
         
         global $conf;
-        $title = !empty($pageTitle) ? $pageTitle . ' - ' . $conf['site_name'] : $conf['site_name'] . ' - Online Store';
+        $title = !empty($pageTitle) ? $pageTitle . ' - ' . $conf['site_name'] : $conf['site_name'] . ' - Smart Shopping Experience';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -1012,7 +1012,7 @@ class Layout {
      */
     public function banner($conf, $title = '', $subtitle = '', $ctaText = 'Start Shopping', $ctaLink = 'products.php', $features = []) {
         $defaultTitle = 'Welcome to ' . $conf['site_name'];
-        $defaultSubtitle = 'Discover amazing products at unbeatable prices. Fast delivery across Kenya.';
+        $defaultSubtitle = 'Your smart shopping destination for quality products at unbeatable prices. Fast delivery across Kenya.';
         
         if (empty($features)) {
             $features = [
@@ -1228,7 +1228,7 @@ class Layout {
                         <a href="#" title="Subscribe to our YouTube"><i class="fab fa-youtube"></i></a>
                     </div>
                     <div class="mt-3">
-                        <p class="mb-1"><i class="fas fa-phone me-2"></i>+254 700 000 000</p>
+                        <p class="mb-1"><i class="fas fa-phone me-2"></i>+254 795 550 352</p>
                         <p class="mb-1"><i class="fas fa-envelope me-2"></i>support@<?php echo strtolower($conf['site_name']); ?>.co.ke</p>
                         <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Nairobi, Kenya</p>
                     </div>

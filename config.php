@@ -7,9 +7,9 @@ ini_set('display_startup_errors', 1);
 $conf['site_timezone'] = 'Africa/Nairobi';
 
 // Site information
-$conf['site_name'] = 'Online Store';
+$conf['site_name'] = 'SMARTDUKA';
 $conf['site_url'] = 'http://localhost/IAP2.2Dev';
-$conf['admin_email'] = 'Devyan.jethwa@strathmore.edu';
+$conf['admin_email'] = 'smartduka@support.com';
 
 // Site language
 $conf['site_lang'] = 'en';
@@ -24,12 +24,12 @@ $conf['db_name'] = 'auth_db';
 // Email configuration
 $conf['mail_type'] = 'smtp'; 
 $conf['smtp_host'] = 'smtp.gmail.com';
-$conf['smtp_user'] = 'devyan.jethwa@strathmore.edu';
+$conf['smtp_user'] = 'smartduka@support.com';
 $conf['smtp_pass'] = 'hvmc tezo jexn lbkg';
 $conf['smtp_port'] = 465;
 $conf['smtp_secure'] = 'ssl';
-$conf['smtp_recepient']='Devyan';
-$conf['recepient_email']='vrindevj@gmail.com';
+$conf['smtp_recepient']='SMARTDUKA Support';
+$conf['recepient_email']='smartduka@support.com';
 
 // Global PDO Database Connection
 try {
@@ -52,8 +52,8 @@ $conf['mpesa'] = [
     'short_code' => '174379', // Safaricom test shortcode
     'passkey' => 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919', // Safaricom test passkey
     'callback_url' => 'https://webhook.site/95e84f8b-c43d-4a27-b7de-0a1e5f95e6c8',
-    'account_reference' => 'OnlineStore',
-    'transaction_desc' => 'Online Store Payment',
+    'account_reference' => 'SMARTDUKA',
+    'transaction_desc' => 'SMARTDUKA Payment',
     'timeout_url' => 'https://webhook.site/95e84f8b-c43d-4a27-b7de-0a1e5f95e6c8'
 ];
 
