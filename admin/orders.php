@@ -133,6 +133,9 @@ $layout->header('Admin - Order Management');
                     <a href="users.php" class="list-group-item list-group-item-action">
                         <i class="fas fa-users me-2"></i>Users
                     </a>
+                    <a href="mpesa_simple.php" class="list-group-item list-group-item-action">
+                        <i class="fas fa-mobile-alt me-2" style="color: #00D4AA;"></i>M-Pesa Transactions
+                    </a>
                     <a href="../dashboard.php" class="list-group-item list-group-item-action">
                         <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
                     </a>
@@ -145,6 +148,14 @@ $layout->header('Admin - Order Management');
             <!-- Header and Stats -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2><i class="fas fa-shopping-cart me-2"></i>Order Management</h2>
+                <div>
+                    <a href="mpesa_transactions.php" class="btn btn-outline-success me-2">
+                        <i class="fas fa-mobile-alt me-2" style="color: #00D4AA;"></i>M-Pesa Transactions
+                    </a>
+                    <a href="users.php" class="btn btn-outline-primary">
+                        <i class="fas fa-users me-2"></i>User Management
+                    </a>
+                </div>
             </div>
 
             <!-- Statistics Cards -->

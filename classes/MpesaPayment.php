@@ -222,7 +222,7 @@ class MpesaPayment
             
             $result = json_decode($response, true);
             
-            // Check database for transaction status
+            // Get database transaction for order info
             $stmt = $this->pdo->prepare("
                 SELECT * FROM mpesa_transactions 
                 WHERE checkout_request_id = ?
@@ -237,12 +237,73 @@ class MpesaPayment
                 ];
             }
             
+            // Process the real M-Pesa API response
+            $apiResultCode = $result['ResultCode'] ?? null;
+            $apiResultDesc = $result['ResultDesc'] ?? 'Unknown status';
+            
+            // Determine status from M-Pesa API response
+            $mpesaStatus = 'pending'; // Default
+            $mpesaReceiptNumber = null;
+            $transactionDate = null;
+            
+            if ($apiResultCode !== null) {
+                if ($apiResultCode == 0) {
+                    // Success - Payment completed
+                    $mpesaStatus = 'completed';
+                    
+                    // Update database with completed status if not already done
+                    if ($transaction['status'] !== 'completed') {
+                        $stmt = $this->pdo->prepare("
+                            UPDATE mpesa_transactions 
+                            SET status = 'completed', 
+                                result_code = ?, 
+                                result_desc = ?,
+                                updated_at = NOW()
+                            WHERE checkout_request_id = ?
+                        ");
+                        $stmt->execute([$apiResultCode, $apiResultDesc, $checkoutRequestId]);
+                        
+                        // Update order payment status
+                        $stmt = $this->pdo->prepare("
+                            UPDATE orders SET 
+                                payment_status = 'paid',
+                                status = 'confirmed'
+                            WHERE id = ?
+                        ");
+                        $stmt->execute([$transaction['order_id']]);
+                    }
+                } elseif ($apiResultCode == 1032) {
+                    // User cancelled
+                    $mpesaStatus = 'cancelled';
+                } elseif ($apiResultCode == 1037) {
+                    // Timeout - user didn't enter PIN
+                    $mpesaStatus = 'timeout';
+                } elseif ($apiResultCode > 0) {
+                    // Other error codes indicate failure
+                    $mpesaStatus = 'failed';
+                    
+                    // Update database with failed status
+                    if ($transaction['status'] === 'pending') {
+                        $stmt = $this->pdo->prepare("
+                            UPDATE mpesa_transactions 
+                            SET status = ?, 
+                                result_code = ?, 
+                                result_desc = ?,
+                                updated_at = NOW()
+                            WHERE checkout_request_id = ?
+                        ");
+                        $stmt->execute([$mpesaStatus, $apiResultCode, $apiResultDesc, $checkoutRequestId]);
+                    }
+                }
+            }
+            
             return [
                 'success' => true,
-                'status' => $transaction['status'],
-                'mpesa_receipt_number' => $transaction['mpesa_receipt_number'],
-                'transaction_date' => $transaction['transaction_date'],
-                'result_desc' => $result['ResultDesc'] ?? $transaction['result_desc'],
+                'status' => $mpesaStatus,
+                'mpesa_receipt_number' => $transaction['mpesa_receipt_number'] ?? $mpesaReceiptNumber,
+                'transaction_date' => $transaction['transaction_date'] ?? $transactionDate,
+                'result_desc' => $apiResultDesc,
+                'result_code' => $apiResultCode,
                 'api_response' => $result
             ];
             

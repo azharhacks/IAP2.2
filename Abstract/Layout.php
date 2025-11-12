@@ -917,6 +917,7 @@ class Layout {
                             <?php if (isset($_SESSION['role']) && in_array($_SESSION['role'], ['admin', 'super_admin'])): ?>
                             <li><a class="dropdown-item" href="admin/orders.php"><i class="fas fa-shopping-cart me-2"></i>Order Management</a></li>
                             <li><a class="dropdown-item" href="admin/users.php"><i class="fas fa-users-cog me-2"></i>User Management</a></li>
+                            <li><a class="dropdown-item" href="admin/mpesa_transactions.php"><i class="fas fa-mobile-alt me-2" style="color: #00D4AA;"></i>M-Pesa Transactions</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <?php endif; ?>
                             <li><a class="dropdown-item" href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>

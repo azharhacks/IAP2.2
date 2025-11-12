@@ -155,6 +155,9 @@ $layout->header('Admin - User Management');
                     <a href="users.php" class="list-group-item list-group-item-action active">
                         <i class="fas fa-users me-2"></i>Users
                     </a>
+                    <a href="mpesa_simple.php" class="list-group-item list-group-item-action">
+                        <i class="fas fa-mobile-alt me-2" style="color: #00D4AA;"></i>M-Pesa Transactions
+                    </a>
                     <a href="../dashboard.php" class="list-group-item list-group-item-action">
                         <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
                     </a>
