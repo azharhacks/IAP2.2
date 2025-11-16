@@ -1,81 +1,158 @@
 <?php
 /**
- * M-Pesa Callback Handler
- * Processes payment confirmations from Safaricom
+ * M-Pesa Callback Handler - SMARTDUKA
+ * Handles M-Pesa payment callbacks from Safaricom
  */
 
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/ClassAutoload.php';
+require_once 'config.php';
 
-// Set JSON response headers
-header('Content-Type: application/json');
+// Log all incoming requests for debugging
+$logFile = 'mpesa_callbacks.log';
+$requestBody = file_get_contents('php://input');
+$timestamp = date('Y-m-d H:i:s');
 
-// Log all incoming data for debugging
-$logData = [
-    'timestamp' => date('Y-m-d H:i:s'),
-    'method' => $_SERVER['REQUEST_METHOD'],
-    'headers' => getallheaders(),
-    'raw_input' => file_get_contents('php://input'),
-    'post_data' => $_POST,
-    'get_data' => $_GET
-];
-
-error_log('M-Pesa Callback Data: ' . json_encode($logData));
+// Log the callback
+file_put_contents($logFile, "[$timestamp] Callback received: $requestBody\n", FILE_APPEND);
 
 try {
-    // Initialize database connection
-    $dsn = "mysql:host={$conf['db_host']};dbname={$conf['db_name']};charset=utf8mb4";
-    $pdo = new PDO($dsn, $conf['db_user'], $conf['db_pass'], [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    ]);
-    
-    // Get callback data
-    $callbackData = json_decode(file_get_contents('php://input'), true);
+    // Decode the callback data
+    $callbackData = json_decode($requestBody, true);
     
     if (!$callbackData) {
-        throw new Exception('Invalid callback data received');
+        throw new Exception('Invalid callback data');
     }
     
-    // Log the structured callback data
-    error_log('M-Pesa Structured Callback: ' . json_encode($callbackData));
+    // Extract callback information
+    $stkCallback = $callbackData['Body']['stkCallback'] ?? null;
     
-    // Initialize M-Pesa payment class
-    $mpesa = new MpesaPayment($pdo, $conf['mpesa']);
+    if (!$stkCallback) {
+        throw new Exception('No STK callback data found');
+    }
     
-    // Process the callback
-    $result = $mpesa->processCallback($callbackData);
+    $merchantRequestId = $stkCallback['MerchantRequestID'] ?? null;
+    $checkoutRequestId = $stkCallback['CheckoutRequestID'] ?? null;
+    $resultCode = $stkCallback['ResultCode'] ?? null;
+    $resultDesc = $stkCallback['ResultDesc'] ?? null;
     
-    if ($result['success']) {
-        // Log successful processing
-        error_log('M-Pesa Callback Processed Successfully: ' . json_encode($result));
+    file_put_contents($logFile, "[$timestamp] Processing: CheckoutRequestID=$checkoutRequestId, ResultCode=$resultCode\n", FILE_APPEND);
+    
+    if (!$checkoutRequestId) {
+        throw new Exception('Missing CheckoutRequestID');
+    }
+    
+    // Find the transaction in database
+    $stmt = $pdo->prepare("SELECT * FROM mpesa_transactions WHERE checkout_request_id = ?");
+    $stmt->execute([$checkoutRequestId]);
+    $transaction = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    if (!$transaction) {
+        file_put_contents($logFile, "[$timestamp] Transaction not found for CheckoutRequestID: $checkoutRequestId\n", FILE_APPEND);
+        // Still respond with success to Safaricom
+        echo json_encode(['ResultCode' => 0, 'ResultDesc' => 'Success']);
+        exit();
+    }
+    
+    $orderId = $transaction['order_id'];
+    
+    // Start database transaction
+    $pdo->beginTransaction();
+    
+    if ($resultCode == 0) {
+        // Payment successful
+        $callbackMetadata = $stkCallback['CallbackMetadata']['Item'] ?? [];
         
-        // Return success response to Safaricom
-        echo json_encode([
-            'ResultCode' => 0,
-            'ResultDesc' => 'Callback processed successfully'
-        ]);
+        $mpesaReceiptNumber = null;
+        $transactionDate = null;
+        $phoneNumber = null;
+        
+        // Extract metadata
+        foreach ($callbackMetadata as $item) {
+            switch ($item['Name']) {
+                case 'MpesaReceiptNumber':
+                    $mpesaReceiptNumber = $item['Value'];
+                    break;
+                case 'TransactionDate':
+                    $transactionDate = $item['Value'];
+                    break;
+                case 'PhoneNumber':
+                    $phoneNumber = $item['Value'];
+                    break;
+            }
+        }
+        
+        // Update transaction status
+        $stmt = $pdo->prepare("
+            UPDATE mpesa_transactions 
+            SET status = 'completed', 
+                transaction_id = ?, 
+                result_desc = ?, 
+                updated_at = NOW(),
+                transaction_date = ?
+            WHERE checkout_request_id = ?
+        ");
+        $stmt->execute([$mpesaReceiptNumber, $resultDesc, $transactionDate, $checkoutRequestId]);
+        
+        // Update order status
+        $stmt = $pdo->prepare("
+            UPDATE orders 
+            SET payment_status = 'paid', 
+                order_status = 'processing',
+                payment_method = 'mpesa',
+                updated_at = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([$orderId]);
+        
+        file_put_contents($logFile, "[$timestamp] Payment successful: Order $orderId, Receipt $mpesaReceiptNumber\n", FILE_APPEND);
+        
     } else {
-        // Log processing error
-        error_log('M-Pesa Callback Processing Failed: ' . $result['message']);
+        // Payment failed or cancelled
+        $stmt = $pdo->prepare("
+            UPDATE mpesa_transactions 
+            SET status = 'failed', 
+                result_desc = ?, 
+                updated_at = NOW()
+            WHERE checkout_request_id = ?
+        ");
+        $stmt->execute([$resultDesc, $checkoutRequestId]);
         
-        // Return error response to Safaricom
-        echo json_encode([
-            'ResultCode' => 1,
-            'ResultDesc' => 'Callback processing failed: ' . $result['message']
-        ]);
+        // Update order status
+        $stmt = $pdo->prepare("
+            UPDATE orders 
+            SET payment_status = 'failed',
+                updated_at = NOW()
+            WHERE id = ?
+        ");
+        $stmt->execute([$orderId]);
+        
+        file_put_contents($logFile, "[$timestamp] Payment failed: Order $orderId, Reason: $resultDesc\n", FILE_APPEND);
     }
+    
+    // Commit transaction
+    $pdo->commit();
+    
+    // Send success response to Safaricom
+    $response = [
+        'ResultCode' => 0,
+        'ResultDesc' => 'Success'
+    ];
+    
+    header('Content-Type: application/json');
+    echo json_encode($response);
     
 } catch (Exception $e) {
-    // Log the error
-    error_log('M-Pesa Callback Error: ' . $e->getMessage());
+    // Rollback on error
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     
-    // Return error response to Safaricom
+    file_put_contents($logFile, "[$timestamp] Error: " . $e->getMessage() . "\n", FILE_APPEND);
+    
+    // Still send success response to prevent retries
+    header('Content-Type: application/json');
     echo json_encode([
-        'ResultCode' => 1,
-        'ResultDesc' => 'Internal server error: ' . $e->getMessage()
+        'ResultCode' => 0,
+        'ResultDesc' => 'Success'
     ]);
 }
-
-// Always return HTTP 200 to prevent Safaricom from retrying
-http_response_code(200);
+?>

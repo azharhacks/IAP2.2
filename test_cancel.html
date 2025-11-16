@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Cancel Order</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .button { background: #dc3545; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 10px; }
+        .button:hover { background: #c82333; }
+        .result { margin: 15px 0; padding: 15px; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; border: 1px solid #bee5eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚫 Cancel Order Test</h1>
+        
+        <div class="info">
+            <h3>Test Cancel Order Functionality</h3>
+            <p>This will test if the cancel order system is working properly.</p>
+        </div>
+        
+        <button class="button" onclick="testCancel('999')">Test Cancel (Order ID 999)</button>
+        <button class="button" onclick="testCancel('invalid')">Test Invalid Order</button>
+        <button class="button" onclick="checkFiles()">Check Files</button>
+        
+        <div id="results"></div>
+        
+        <div class="info">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="orders.php">Back to Orders</a></li>
+                <li><a href="debug_cancel_order.php">Debug Cancel System</a></li>
+                <li><a href="cancel_order_simple.php">Simple Cancel Test</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function testCancel(orderId) {
+            const results = document.getElementById('results');
+            results.innerHTML = '<div class="info">🔄 Testing cancel order with ID: ' + orderId + '</div>';
+            
+            try {
+                const response = await fetch('cancel_order.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({
+                        order_id: orderId,
+                        timestamp: new Date().getTime()
+                    })
+                });
+                
+                const responseText = await response.text();
+                let data;
+                
+                try {
+                    data = JSON.parse(responseText);
+                } catch (e) {
+                    data = { raw_response: responseText };
+                }
+                
+                const resultClass = response.ok ? 'success' : 'error';
+                results.innerHTML = 
+                    '<div class="' + resultClass + '">' +
+                    '<strong>Status:</strong> ' + response.status + ' ' + response.statusText + '<br>' +
+                    '<strong>Response:</strong> <pre>' + JSON.stringify(data, null, 2) + '</pre>' +
+                    '</div>';
+                    
+            } catch (error) {
+                results.innerHTML = 
+                    '<div class="error">' +
+                    '<strong>Network Error:</strong> ' + error.message +
+                    '</div>';
+            }
+        }
+        
+        async function checkFiles() {
+            const results = document.getElementById('results');
+            const files = ['cancel_order.php', 'config.php', 'orders.php'];
+            let fileChecks = '';
+            
+            for (const file of files) {
+                try {
+                    const response = await fetch(file, { method: 'HEAD' });
+                    fileChecks += '✅ ' + file + ' exists<br>';
+                } catch (error) {
+                    fileChecks += '❌ ' + file + ' missing or error<br>';
+                }
+            }
+            
+            results.innerHTML = '<div class="info"><strong>File Check:</strong><br>' + fileChecks + '</div>';
+        }
+    </script>
+</body>
+</html>

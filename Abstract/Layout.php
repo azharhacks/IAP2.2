@@ -53,7 +53,7 @@ class Layout {
             --dark-color: #1f2937;
             
             /* Bootstrap Color Overrides */
-            --bs-primary: #ff6b35;
+            --bs-primary: #ffffffff;
             --bs-primary-rgb: 255, 107, 53;
             --bs-secondary: #f97316;
             --bs-secondary-rgb: 249, 115, 22;
@@ -73,14 +73,14 @@ class Layout {
         }
         
         body { 
-            background: #ff6b35;
+            background: #f5f5f5 !important;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
-            color: #1e293b;
+            color: #000000;
             position: relative;
         }
         
-        /* Orange background overlay */
+        /* Clean grey background */
         body::before {
             content: '';
             position: fixed;
@@ -88,7 +88,7 @@ class Layout {
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 107, 53, 0.05);
+            background: #f5f5f5;
             pointer-events: none;
             z-index: -1;
         }
@@ -107,8 +107,8 @@ class Layout {
         .navbar-brand {
             font-weight: 800;
             font-size: 1.75rem;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+            color: #000000 !important;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
             transition: var(--transition);
         }
         
@@ -118,9 +118,9 @@ class Layout {
         }
         
         .navbar-brand i {
-            color: #fff;
+            color: #000000 !important;
             margin-right: 0.5rem;
-            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.3));
             animation: pulse 2s infinite;
         }
         
@@ -131,6 +131,7 @@ class Layout {
         
         .navbar-nav .nav-link {
             font-weight: 500;
+            color: #000000 !important;
             transition: var(--transition);
             border-radius: var(--border-radius-sm);
             margin: 0 4px;
@@ -146,7 +147,7 @@ class Layout {
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.3), transparent);
+            background: linear-gradient(90deg, rgba(255, 107, 53, 0.3), transparent);
             transition: var(--transition);
         }
         
@@ -522,7 +523,7 @@ class Layout {
         /* Footer Styles */
         footer { 
             background: var(--dark-gradient);
-            color: #cbd5e1; 
+            color: #000000 !important; 
             padding: 4rem 0 2rem; 
             margin-top: 6rem;
             position: relative;
@@ -556,14 +557,10 @@ class Layout {
         }
         
         footer h5 {
-            color: #f8fafc;
+            color: #000000 !important;
             margin-bottom: 1.5rem;
             font-weight: 700;
             font-size: 1.2rem;
-            background: var(--primary-color);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         
         footer .list-unstyled {
@@ -575,7 +572,7 @@ class Layout {
         }
         
         footer a {
-            color: #94a3b8;
+            color: #000000 !important;
             text-decoration: none;
             transition: var(--transition);
             display: inline-flex;
@@ -584,7 +581,7 @@ class Layout {
         }
         
         footer a:hover {
-            color: #f8fafc;
+            color: #333333 !important;
             transform: translateX(5px);
             padding-left: 0.5rem;
         }
@@ -597,6 +594,11 @@ class Layout {
         footer a:hover i {
             color: #6366f1;
             transform: scale(1.2);
+        }
+        
+        /* Ensure all footer text is black */
+        footer p, footer span, footer small {
+            color: #000000 !important;
         }
         
         /* Social links styling */
@@ -933,7 +935,7 @@ class Layout {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link <?php echo $activePage === 'orders' ? 'active' : ''; ?>" href="orders.php">
+                        <a class="nav-link <?php echo $activePage === 'orders' ? 'active' : ''; ?>" href="orders_new.php">
                             <i class="fas fa-list me-1"></i>My Orders
                         </a>
                     </li>
@@ -1217,121 +1219,55 @@ class Layout {
     <footer>
         <div class="container">
             <div class="row">
-                <div class="col-lg-4 col-md-6 mb-4">
+                <div class="col-md-6 mb-4">
                     <h5><i class="fas fa-shopping-bag me-2"></i><?php echo htmlspecialchars($conf['site_name']); ?></h5>
-                    <p class="mb-3">Your premier online shopping destination in Kenya. Quality products, secure checkout, and fast delivery across the country.</p>
-                    <div class="social-links">
-                        <a href="#" title="Follow us on Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" title="Follow us on Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" title="Follow us on Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" title="Connect on LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" title="Subscribe to our YouTube"><i class="fab fa-youtube"></i></a>
-                    </div>
+                    <p class="mb-3">Your premier online shopping destination in Kenya.</p>
                     <div class="mt-3">
                         <p class="mb-1"><i class="fas fa-phone me-2"></i>+254 795 550 352</p>
-                        <p class="mb-1"><i class="fas fa-envelope me-2"></i>support@<?php echo strtolower($conf['site_name']); ?>.co.ke</p>
+                        <p class="mb-1"><i class="fas fa-envelope me-2"></i>smartduka@support.com</p>
                         <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Nairobi, Kenya</p>
                     </div>
                 </div>
                 
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h5><i class="fas fa-store me-2"></i>Shop</h5>
+                <div class="col-md-3 mb-4">
+                    <h5>Quick Links</h5>
                     <ul class="list-unstyled">
-                        <li><a href="products.php"><i class="fas fa-th-grid me-2"></i>All Products</a></li>
-                        <li><a href="products.php?category=1"><i class="fas fa-laptop me-2"></i>Electronics</a></li>
-                        <li><a href="products.php?category=2"><i class="fas fa-tshirt me-2"></i>Fashion</a></li>
-                        <li><a href="products.php?category=3"><i class="fas fa-home me-2"></i>Home & Living</a></li>
-                        <li><a href="products.php?category=4"><i class="fas fa-dumbbell me-2"></i>Sports</a></li>
-                        <li><a href="products.php?featured=1"><i class="fas fa-star me-2"></i>Featured</a></li>
+                        <li><a href="products.php">All Products</a></li>
+                        <li><a href="cart.php">Shopping Cart</a></li>
+                        <li><a href="orders.php">My Orders</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
                     </ul>
                 </div>
                 
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h5><i class="fas fa-user-circle me-2"></i>Account</h5>
+                <div class="col-md-3 mb-4">
+                    <h5>Account</h5>
                     <ul class="list-unstyled">
                         <?php if (isset($_SESSION['user_id'])): ?>
-                        <li><a href="dashboard.php"><i class="fas fa-tachometer-alt me-2"></i>My Dashboard</a></li>
-                        <li><a href="profile.php"><i class="fas fa-user-edit me-2"></i>My Profile</a></li>
-                        <li><a href="addresses.php"><i class="fas fa-map-marker-alt me-2"></i>My Addresses</a></li>
-                        <li><a href="orders.php"><i class="fas fa-list me-2"></i>My Orders</a></li>
-                        <li><a href="cart.php"><i class="fas fa-shopping-cart me-2"></i>Shopping Cart</a></li>
-                        <li><a href="logout.php"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                        <li><a href="dashboard.php">My Dashboard</a></li>
+                        <li><a href="profile.php">My Profile</a></li>
+                        <li><a href="logout.php">Logout</a></li>
                         <?php else: ?>
-                        <li><a href="Signin.php"><i class="fas fa-sign-in-alt me-2"></i>Sign In</a></li>
-                        <li><a href="Signup.php"><i class="fas fa-user-plus me-2"></i>Create Account</a></li>
+                        <li><a href="Signin.php">Sign In</a></li>
+                        <li><a href="Signup.php">Create Account</a></li>
                         <?php endif; ?>
+                        <li><a href="#privacy">Privacy Policy</a></li>
                     </ul>
-                </div>
-                
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h5><i class="fas fa-headset me-2"></i>Support</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#contact"><i class="fas fa-envelope me-2"></i>Contact Us</a></li>
-                        <li><a href="#faq"><i class="fas fa-question-circle me-2"></i>FAQ</a></li>
-                        <li><a href="#shipping"><i class="fas fa-shipping-fast me-2"></i>Shipping Info</a></li>
-                        <li><a href="#returns"><i class="fas fa-undo me-2"></i>Returns</a></li>
-                        <li><a href="#warranty"><i class="fas fa-shield-alt me-2"></i>Warranty</a></li>
-                        <li><a href="#track"><i class="fas fa-search-location me-2"></i>Track Order</a></li>
-                    </ul>
-                </div>
-                
-                <div class="col-lg-2 col-md-6 mb-4">
-                    <h5><i class="fas fa-building me-2"></i>Company</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="#about"><i class="fas fa-info-circle me-2"></i>About Us</a></li>
-                        <li><a href="#careers"><i class="fas fa-briefcase me-2"></i>Careers</a></li>
-                        <li><a href="#news"><i class="fas fa-newspaper me-2"></i>News</a></li>
-                        <li><a href="#investors"><i class="fas fa-chart-line me-2"></i>Investors</a></li>
-                        <li><a href="#privacy"><i class="fas fa-user-shield me-2"></i>Privacy Policy</a></li>
-                        <li><a href="#terms"><i class="fas fa-file-contract me-2"></i>Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Newsletter Signup -->
-            <div class="row mt-4">
-                <div class="col-lg-6">
-                    <h5><i class="fas fa-envelope-open me-2"></i>Stay Updated</h5>
-                    <p class="mb-3">Subscribe to get special offers, free giveaways, and updates on new products.</p>
-                    <form class="d-flex" action="#newsletter" method="POST">
-                        <input type="email" class="form-control me-2" placeholder="Enter your email" required>
-                        <button class="btn btn-primary" type="submit">
-                            <i class="fas fa-paper-plane me-1"></i>Subscribe
-                        </button>
-                    </form>
-                </div>
-                <div class="col-lg-6">
-                    <h5><i class="fas fa-download me-2"></i>Download Our App</h5>
-                    <p class="mb-3">Shop on the go with our mobile app. Available on all platforms.</p>
-                    <div class="d-flex gap-2">
-                        <a href="#" class="btn btn-outline-light btn-sm">
-                            <i class="fab fa-apple me-1"></i>App Store
-                        </a>
-                        <a href="#" class="btn btn-outline-light btn-sm">
-                            <i class="fab fa-google-play me-1"></i>Play Store
-                        </a>
-                    </div>
                 </div>
             </div>
             
             <hr class="border-secondary mt-4">
             
             <div class="row align-items-center">
-                <div class="col-md-6">
-                    <p class="mb-2 mb-md-0">
+                <div class="col-md-8">
+                    <p class="mb-0">
                         &copy; <?php echo date("Y"); ?> <?php echo htmlspecialchars($conf['site_name']); ?>. All rights reserved.
-                        <br class="d-md-none">
-                        <small class="text-muted">Made with <i class="fas fa-heart text-danger"></i> in Kenya</small>
                     </p>
                 </div>
-                <div class="col-md-6 text-md-end">
-                    <p class="mb-2"><small class="text-muted">We Accept:</small></p>
+                <div class="col-md-4 text-md-end">
                     <div class="payment-methods">
-                        <i class="fab fa-cc-visa" title="Visa" data-bs-toggle="tooltip"></i>
-                        <i class="fab fa-cc-mastercard" title="Mastercard" data-bs-toggle="tooltip"></i>
-                        <i class="fas fa-mobile-alt text-success" title="M-Pesa" data-bs-toggle="tooltip"></i>
-                        <i class="fas fa-money-bill-wave text-warning" title="Cash on Delivery" data-bs-toggle="tooltip"></i>
-                        <i class="fab fa-paypal" title="PayPal" data-bs-toggle="tooltip"></i>
+                        <i class="fab fa-cc-visa" title="Visa"></i>
+                        <i class="fab fa-cc-mastercard" title="Mastercard"></i>
+                        <i class="fas fa-mobile-alt text-success" title="M-Pesa"></i>
                     </div>
                 </div>
             </div>

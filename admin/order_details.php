@@ -109,3 +109,15 @@ try {
         </div>
     </div>
 </div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="d-flex justify-content-end">
+            <a href="order_pdf_export.php?id=<?php echo $order['id']; ?>" 
+               class="btn btn-primary" 
+               target="_blank">
+                <i class="fas fa-file-pdf me-2"></i>Export to PDF
+            </a>
+        </div>
+    </div>
+</div>

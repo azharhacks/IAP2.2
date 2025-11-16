@@ -181,11 +181,16 @@ $layout->header('Admin - User Management');
             <?php endif; ?>
 
             <div class="card">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">
                         <i class="fas fa-list me-2"></i>Registered Users 
                         <span class="badge bg-secondary"><?= count($users) ?></span>
                     </h6>
+                    <div>
+                        <a href="users_pdf_export.php" class="btn btn-outline-danger btn-sm" target="_blank">
+                            <i class="fas fa-file-pdf me-1"></i>Export PDF
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body p-0">
                     <?php if (empty($users)): ?>

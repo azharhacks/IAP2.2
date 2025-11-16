@@ -1,0 +1,25 @@
+{
+    "free_shipping_threshold": 1000,
+    "rates": [
+        {
+            "min": 0,
+            "max": 99.99,
+            "cost": 20
+        },
+        {
+            "min": 100,
+            "max": 499.99,
+            "cost": 30
+        },
+        {
+            "min": 500,
+            "max": 999.99,
+            "cost": 50
+        },
+        {
+            "min": 1000,
+            "max": 999999,
+            "cost": 0
+        }
+    ]
+}
