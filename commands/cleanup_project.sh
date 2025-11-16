@@ -99,3 +99,82 @@ echo "   ❌ Backup and temporary files"
 echo "   ❌ Unused helper directories"
 echo ""
 echo "🚀 Project is now clean and production-ready!"
+
+echo "🧹 Cleaning up SMARTDUKA Project Files"
+echo "====================================="
+
+PROJECT_DIR="/home/devyanjethwaa/IAP2.2-1"
+cd "$PROJECT_DIR"
+
+echo "📁 Current directory: $(pwd)"
+echo ""
+
+# List files to be removed
+echo "🗑️  Files to be removed:"
+echo "----------------------"
+
+# Shell scripts to remove
+SHELL_SCRIPTS=(
+    "deploy_fixed_order_confirmation.sh"
+    "deploy_pdf_fix.sh"
+    "fix_http_500.sh"
+    "deploy_syntax_fix.sh"
+    "deploy_and_troubleshoot.sh"
+    "deploy_improved_pdf.sh"
+)
+
+# Test files and duplicates to remove
+TEST_FILES=(
+    "order_test_simple.php"
+)
+
+# Check and remove shell scripts
+echo "📜 Shell scripts:"
+for script in "${SHELL_SCRIPTS[@]}"; do
+    if [ -f "$script" ]; then
+        echo "   ❌ $script"
+        rm -f "$script"
+    fi
+done
+
+# Check and remove test files
+echo "🧪 Test files:"
+for file in "${TEST_FILES[@]}"; do
+    if [ -f "$file" ]; then
+        echo "   ❌ $file"
+        rm -f "$file"
+    fi
+done
+
+# Remove log files if any
+echo "📋 Log files:"
+find . -name "*.log" -type f | while read file; do
+    echo "   ❌ $file"
+    rm -f "$file"
+done
+
+# Remove temporary files
+echo "🗂️  Temporary files:"
+find . -name "*~" -o -name "*.tmp" -o -name "*.bak" | while read file; do
+    echo "   ❌ $file"
+    rm -f "$file"
+done
+
+echo ""
+echo "✅ Cleanup completed!"
+echo ""
+echo "🎯 FINAL PROJECT STRUCTURE:"
+echo "=========================="
+echo ""
+echo "📂 Core Application Files:"
+ls -la *.php | head -10
+echo ""
+echo "📚 Documentation Files:"
+ls -la *.md
+echo ""
+echo "📊 Project Summary:"
+echo "   PHP Files: $(ls -1 *.php 2>/dev/null | wc -l)"
+echo "   Documentation: $(ls -1 *.md 2>/dev/null | wc -l)"  
+echo "   Shell Scripts: $(ls -1 *.sh 2>/dev/null | wc -l)"
+echo ""
+echo "🎉 Project is now clean and organized!"
